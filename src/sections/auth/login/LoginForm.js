@@ -10,6 +10,10 @@ import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hook-form';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import { httpManager } from '../../../managers/httpManager';
 
 // ----------------------------------------------------------------------
 
@@ -17,6 +21,14 @@ export default function LoginForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [formValues, setFormValues] = useState({ 
+                                                email: '',
+                                                password: '',
+                                                userMod: ''})
+
+  const handleChangeSelect = (event) => {
+       setFormValues({...formValues, ['userMod']:event.target.value})
+     };
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
@@ -39,18 +51,63 @@ export default function LoginForm() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async () => {
-    navigate('/dashboard', { replace: true });
+  const onSubmit = async (event) => {
+
+    event.preventDefault();
+    // navigate('/dashboard', { replace: true });
+    // console.log(formValues)
+    const contactBackend = await httpManager.loginUser({
+                                              email: formValues.email, 
+                                              userMod: formValues.userMod, 
+                                              password: formValues.password })
+
+    if(contactBackend['data']['responseCode'] === 200) {
+      // succesfully registered go to login page
+      const token = contactBackend['data']['responseData']['token']
+      localStorage.setItem('customerToken', token)
+      if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Abogado") {
+        console.log(`GO TO ABOGADO PAGE`)
+      } else if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Cliente") {
+        console.log(`GO TO CLIENTE PAGE`)
+      }
+
+  } else {
+    // user is not logged in 
+  }
+
   };
 
+  const handleChange = (event) => {
+   
+    const {value, name} = event.target
+    setFormValues({...formValues, [name]:value})
+ 
+   }
+
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       <Stack spacing={3}>
-        <RHFTextField name="email" label="Email address" />
+        <RHFTextField required name="email" label="Correo Electronico" value = {formValues["email"]} onChange = {handleChange} />
+
+        <InputLabel id="demo-simple-select-label">Elige si eres cliente o abogado</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          required
+          id="demo-simple-select"
+          value={formValues['userMod']}
+          label="Abogado o cliente"
+          onChange={handleChangeSelect}
+        >
+          <MenuItem value={"Abogado"}>Abogado</MenuItem>
+          <MenuItem value={"Cliente"}>Cliente</MenuItem>
+        </Select>
 
         <RHFTextField
           name="password"
           label="Password"
+          required
+          value = {formValues["password"]} 
+          onChange = {handleChange}
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (

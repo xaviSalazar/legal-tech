@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Products from './pages/Products';
 import MainLayout from './pages/MainLayout'
+import SocialForm from './sections/auth/register/RegisterSocialForm'
 // import DashboardApp from './pages/DashboardApp';
 
 // -------import { HelmetProvider } from 'react-helmet-async';---------------------------------------------------------------
@@ -38,10 +39,14 @@ export default function Router() {
       path: 'register',
       element: <Register />,
     },
-      {
+    {
       path: '/',
       element: <MainLayout />,
     },
+    {
+      path: 'register-social-form',
+      element: <SocialForm />
+    }
     // {
     //   path: '*',
     //   element: <Navigate to="/404" replace />,

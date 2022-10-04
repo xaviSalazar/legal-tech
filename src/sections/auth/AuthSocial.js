@@ -5,17 +5,87 @@ import Iconify from '../../components/Iconify';
 
 import FacebookLogin from 'react-facebook-login';
 
-import GoogleLogin from 'react-google-login';
+import { GoogleLogin } from 'react-google-login';
+import { gapi } from 'gapi-script';
+import { useEffect } from 'react';
+
+import { httpManager } from '../../managers/httpManager';
+import { useNavigate } from 'react-router-dom';
+
 // ----------------------------------------------------------------------
 
 export default function AuthSocial() {
-  const responseFacebook = (response) => {
+
+  const navigate = useNavigate();
+
+  const clientId = '739497935634-lqeff7f2654mbakdlrhv5inrhg4taons.apps.googleusercontent.com';
+
+  useEffect(() => {
+    const initClient = () => {
+          gapi.client.init({
+          clientId: clientId,
+          scope: ''
+        });
+      };
+      gapi.load('client:auth2', initClient);
+  });
+
+  const responseFacebook = async (response) => {
+
     console.log(response);
+    const contactBackend = 
+          await httpManager.facebookLogin({accessToken: response.accessToken,
+                                           userID: response.userID})
+      console.log(contactBackend)
+      if(contactBackend['data']['responseCode'] === 400) {
+        localStorage.setItem("register_data", JSON.stringify({name: response.name, email: response.email, image: response['picture']['data']['url']}))
+        console.log(`USER IS NOT REGISTERED`)
+        navigate('/register-social-form');
+      } else if(contactBackend['data']['responseCode'] === 200) {
+      // succesfully registered go to login page
+      const token = contactBackend['data']['responseData']['token']
+      localStorage.setItem('customerToken', token)
+
+      if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Abogado") {
+        console.log(`GO TO ABOGADO PAGE`)
+      } else if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Cliente") {
+        console.log(`GO TO CLIENTE PAGE`)
+      }
+
   }
+
+  }
+
+  const onSuccess = async (res) => {
+    console.log('success:', res);
+    const contactBackend =
+        await httpManager.googleLogin({name: res['profileObj']['name'], email: res['profileObj']['email']})
+        console.log(contactBackend)
+        if(contactBackend['data']['responseCode'] === 400) {
+          localStorage.setItem("register_data", JSON.stringify({name: res['profileObj']['name'], email: res['profileObj']['email'], image: res['profileObj']['imageUrl']}))
+          console.log(`USER IS NOT REGISTERED`)
+          navigate('/register-social-form');
+        } else if(contactBackend['data']['responseCode'] === 200) {
+          // succesfully registered go to login page
+          const token = contactBackend['data']['responseData']['token']
+          localStorage.setItem('customerToken', token)
+    
+          if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Abogado") {
+            console.log(`GO TO ABOGADO PAGE`)
+          } else if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Cliente") {
+            console.log(`GO TO CLIENTE PAGE`)
+          }
+    
+      }
+  };
+  const onFailure = (err) => {
+      console.log('failed:', err);
+  };
 
   // const responseGoogle = (response) => {
   //   console.log(response);
   // }
+  
   return (
     <>
       <Stack direction="row" spacing={2}>
@@ -26,12 +96,15 @@ export default function AuthSocial() {
           callback={responseFacebook}
         />
 
-        {/* <GoogleLogin
-          clientId="739497935634-lqeff7f2654mbakdlrhv5inrhg4taons.apps.googleusercontent.com" //CLIENTID NOT CREATED YET
+       <GoogleLogin
+          clientId={clientId}
           buttonText="INGRESA CON GOOGLE"
-          onSuccess={responseGoogle}
-          onFailure={responseGoogle}
-        /> */}
+          onSuccess={onSuccess}
+          onFailure={onFailure}
+          cookiePolicy={'single_host_origin'}
+          isSignedIn={true}
+      />
+
         {/* <Button fullWidth size="large" color="inherit" variant="outlined">
           <Iconify icon="eva:google-fill" color="#DF3E30" width={22} height={22} />
         </Button>
