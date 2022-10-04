@@ -73,7 +73,9 @@ export default function LoginForm() {
         navigate('/cliente-page')
       }
 
-  } else {
+  } else if(contactBackend['data']['responseCode'] === 400){
+
+    alert(contactBackend['data']['message'])
     // user is not logged in 
   }
 
