@@ -1,7 +1,8 @@
 import { accordionSummaryClasses } from "@mui/material";
 import axios from "axios"
 
-const API_BASE_URL = "http://localhost:3001";
+//const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = "https://legaltech-example.herokuapp.com"
 
 // do functions to register users
 const facebookLogin = async (data) => {

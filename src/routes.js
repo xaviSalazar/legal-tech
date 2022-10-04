@@ -11,6 +11,8 @@ import Register from './pages/Register';
 import Products from './pages/Products';
 import MainLayout from './pages/MainLayout'
 import SocialForm from './sections/auth/register/RegisterSocialForm'
+import TalentPage from './pages/TalentPage'
+import ClientPage from './pages/ClientPage';
 // import DashboardApp from './pages/DashboardApp';
 
 // -------import { HelmetProvider } from 'react-helmet-async';---------------------------------------------------------------
@@ -46,6 +48,14 @@ export default function Router() {
     {
       path: 'register-social-form',
       element: <SocialForm />
+    },
+    {
+      path: 'abogado-page',
+      element: <TalentPage />
+    },
+    {
+      path: 'cliente-page',
+      element: <ClientPage />
     }
     // {
     //   path: '*',

@@ -48,8 +48,10 @@ export default function AuthSocial() {
 
       if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Abogado") {
         console.log(`GO TO ABOGADO PAGE`)
+        navigate('/abogado-page')
       } else if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Cliente") {
         console.log(`GO TO CLIENTE PAGE`)
+        navigate('/cliente-page')
       }
 
   }
@@ -72,8 +74,10 @@ export default function AuthSocial() {
     
           if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Abogado") {
             console.log(`GO TO ABOGADO PAGE`)
+            navigate('/abogado-page')
           } else if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Cliente") {
             console.log(`GO TO CLIENTE PAGE`)
+            navigate('/cliente-page')
           }
     
       }
