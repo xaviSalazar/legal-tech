@@ -1,4 +1,5 @@
 import { Link as RouterLink } from 'react-router-dom';
+import { useEffect } from 'react'
 // @mui
 import { styled } from '@mui/material/styles';
 import { Card, Link, Container, Typography } from '@mui/material';
@@ -10,6 +11,11 @@ import Logo from '../components/Logo';
 // sections
 import { LoginForm } from '../sections/auth/login';
 import AuthSocial from '../sections/auth/AuthSocial';
+import { httpManager } from '../managers/httpManager';
+import { AttractionsOutlined } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+
+
 
 // ----------------------------------------------------------------------
 
@@ -58,8 +64,35 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 export default function Login() {
   const smUp = useResponsive('up', 'sm');
-
   const mdUp = useResponsive('up', 'md');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+
+    console.log(`login useeffect`)
+    const token = localStorage.getItem('customerToken')
+    console.log(token)
+    const config = {
+          headers: {Authorization: `Bearer ${token}`}
+    }
+
+    const authenticate = async () => {
+      return await httpManager.customerAuth(config)
+    }
+    
+    authenticate().
+                  then(response => {if(response['data']['responseCode'] === 200)
+                                    {
+                                    if(response['data']['responseData']['userMod'] === "Abogado") {
+                                      console.log(`GO TO ABOGADO PAGE`)
+                                      navigate('/abogado-page')
+                                    } else if(response['data']['responseData']['userMod'] === "Cliente") {
+                                      console.log(`GO TO CLIENTE PAGE`)
+                                      navigate('/cliente-page')
+                                    }
+                                    }
+                                  })
+  }, [])
 
   return (
     <Page title="Login">

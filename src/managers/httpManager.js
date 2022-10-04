@@ -24,6 +24,10 @@ const ownRegisterCustomer = async (data) => {
 const loginUser = async (data) => {
     return await axios.post(`${API_BASE_URL}/login`, data)
 }
+
+const customerAuth = async (data) => {
+    return await axios.get(`${API_BASE_URL}/authUser`, data)
+}
 // const createUser = async (userData) => {
 //    return await axios.post(`${API_BASE_URL}/user`, userData)
 // }
@@ -79,7 +83,8 @@ export const httpManager = {
     registerCustomer,
     ownRegisterCustomer,
     loginUser,
-    googleLogin
+    googleLogin,
+    customerAuth
     
   
 };
