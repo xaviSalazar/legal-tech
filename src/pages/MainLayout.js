@@ -6,8 +6,14 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 import Header from './Header';
 import MainFeaturedPost from './MainFeaturedPost';
+import SearchBar from '../components/SearchBar';
+import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
+import AbogadoCardList from '../components/AbogadoCardList'
+import { abogadosList } from '../constants';
 // import FeaturedPost from './FeaturedPost';
 // import Main from './Main';
 import Sidebar from './Sidebar';
@@ -85,34 +91,46 @@ const sidebar = {
 
 const theme = createTheme();
 
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
+
 export default function MainLayout() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="lg">
+      <Box sx={{ flexGrow: 1 }}>
+
+     ` <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Header title="Abogado Directo" sections={sections} />
+          <main>
+          <MainFeaturedPost post={mainFeaturedPost} />
+        </main>
+        </Grid>
+        <Grid item xs={12}lg={2}>
+        <SearchBar />
+        </Grid>
+        <Grid item xs={12} lg={10}>
+          <AbogadoCardList details = {abogadosList}/>
+        </Grid>
+      </Grid>`
+      </Box>
+      {/* <Container >
+        hola
         <Header title="Abogado Directo" sections={sections} />
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
-          {/* <Grid container spacing={4}>
-            {featuredPosts.map((post) => (
-              <FeaturedPost key={post.title} post={post} />
-            ))}
-          </Grid>
-          <Grid container spacing={5} sx={{ mt: 3 }}>
-            <Main title="From the firehose" posts={posts} />
-            <Sidebar
-              title={sidebar.title}
-              description={sidebar.description}
-              archives={sidebar.archives}
-              social={sidebar.social}
-            />
-          </Grid> */}
         </main>
       </Container>
       <Footer
         title="Footer"
         description="Something here to give the footer a purpose!"
-      />
+      /> */}
     </ThemeProvider>
   );
 }

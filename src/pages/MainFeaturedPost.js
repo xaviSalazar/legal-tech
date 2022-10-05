@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 
 
+
 function MainFeaturedPost(props) {
   const { post } = props;
   const navigate = useNavigate();
@@ -47,24 +48,31 @@ function MainFeaturedPost(props) {
               pr: { md: 0 },
             }}
           >
+            <Grid container spacing={2} columns={12}>
+            <Grid item xs={7} zeroMinWidth>
             <Typography component="h1" variant="h3" color="inherit" gutterBottom>
               {post.title}
             </Typography>
+            </Grid>
+            <Grid item xs={7} zeroMinWidth>
             <Typography variant="h5" color="inherit" paragraph>
               {post.description}
             </Typography>
+            </Grid>
+            </Grid>
+          
             {/* <Link variant="subtitle1" href="#">
               {post.linkText}
             </Link> */}
           </Box>
-          <Grid container spacing={2}>
+          {/* <Grid container spacing={2}>
           <Grid item xs={4} >
           <Button variant="contained">Busco Talento</Button>
           </Grid>
           <Grid item xs={4} >
           <Button variant="contained" color="success">Soy Abogado</Button>
           </Grid>
-          </Grid>
+          </Grid> */}
           
         </Grid>
        

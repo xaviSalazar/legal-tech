@@ -12,7 +12,7 @@ import Logo from '../components/Logo';
 import { LoginForm } from '../sections/auth/login';
 import AuthSocial from '../sections/auth/AuthSocial';
 import { httpManager } from '../managers/httpManager';
-import { AttractionsOutlined } from '@mui/icons-material';
+
 import { useNavigate } from 'react-router-dom';
 
 
@@ -80,8 +80,8 @@ export default function Login() {
       return await httpManager.customerAuth(config)
     }
     
-    authenticate().
-                  then(response => {if(response['data']['responseCode'] === 200)
+    authenticate()
+    .then(response => {if(response['data']['responseCode'] === 200)
                                     {
                                     if(response['data']['responseData']['userMod'] === "Abogado") {
                                       console.log(`GO TO ABOGADO PAGE`)
