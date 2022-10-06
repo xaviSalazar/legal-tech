@@ -28,14 +28,16 @@ const customerAuth = async (data) => {
     return await axios.get(`${API_BASE_URL}/authUser`, data)
 }
 
-export const httpManager = {
+const logoutUser = async(data) => {
+    return await axios.get(`${API_BASE_URL}/logout`, data)
+}
 
+export const httpManager = {
     facebookLogin,
     registerCustomer,
     ownRegisterCustomer,
     loginUser,
     googleLogin,
-    customerAuth
-    
-  
+    customerAuth,
+    logoutUser
 };

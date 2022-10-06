@@ -51,7 +51,7 @@ export default function Router() {
     },
     {
       path: 'abogado-page',
-      element: <TalentPage />
+      element: <TalentPage />,
     },
     {
       path: 'cliente-page',

@@ -111,7 +111,7 @@ export default function AuthSocial() {
           onSuccess={onSuccess}
           onFailure={onFailure}
           cookiePolicy={'single_host_origin'}
-          isSignedIn={true}
+          isSignedIn={false}
       />
 
         {/* <Button fullWidth size="large" color="inherit" variant="outlined">
