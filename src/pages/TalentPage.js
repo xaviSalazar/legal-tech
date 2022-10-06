@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import { Button, Typography, Container, Box } from '@mui/material';
 // components
 import Page from '../components/Page';
+import Header from '../components/TalentPage/Header'
 
 // ----------------------------------------------------------------------
 
@@ -21,8 +22,9 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 export default function TalentPage() {
   return (
-    <Page title="Client page">
-      <Container>
+    <Page title="Talent page">
+      {/* <Container> */}
+      <Header />
         <ContentStyle sx={{ textAlign: 'center', alignItems: 'center' }}>
           <Typography variant="h3" paragraph>
           Pagina TALENTO
@@ -42,7 +44,7 @@ export default function TalentPage() {
             Go to Home
           </Button>
         </ContentStyle>
-      </Container>
+      {/* </Container> */}
     </Page>
   );
 }

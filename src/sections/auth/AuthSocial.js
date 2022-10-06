@@ -38,6 +38,11 @@ export default function AuthSocial() {
                                            userID: response.userID})
       console.log(contactBackend)
       if(contactBackend['data']['responseCode'] === 400) {
+        if(contactBackend['data']['message'].toLowerCase().trim() === "Wrong password login failed".toLowerCase().trim())
+        {
+          alert("Login Invalido! No hubo creacion de cuenta por Facebook login ni Google login, ingrese su contrasenia")
+          return
+        }
         localStorage.setItem("register_data", JSON.stringify({name: response.name, email: response.email, image: response['picture']['data']['url']}))
         console.log(`USER IS NOT REGISTERED`)
         navigate('/register-social-form');
