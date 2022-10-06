@@ -13,7 +13,9 @@ import MainLayout from './pages/MainLayout'
 import SocialForm from './sections/auth/register/RegisterSocialForm'
 import TalentPage from './pages/TalentPage'
 import ClientPage from './pages/ClientPage';
+import Account from './pages/Account';
 // import DashboardApp from './pages/DashboardApp';
+
 
 // -------import { HelmetProvider } from 'react-helmet-async';---------------------------------------------------------------
 
@@ -52,6 +54,12 @@ export default function Router() {
     {
       path: 'abogado-page',
       element: <TalentPage />,
+      children: [
+        { path: 'account', element: <Account /> },
+        // { path: 'user', element: <User /> },
+        { path: 'products', element: <Products /> },
+        // { path: 'blog', element: <Blog /> },
+      ],
     },
     {
       path: 'cliente-page',

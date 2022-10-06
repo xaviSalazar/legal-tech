@@ -18,7 +18,7 @@ const navConfig = [
   },
   {
     title: 'product',
-    path: '/dashboard/products',
+    path: '/abogado-page/products',
     icon: getIcon('eva:shopping-bag-fill'),
   },
   {
@@ -27,8 +27,8 @@ const navConfig = [
     icon: getIcon('eva:file-text-fill'),
   },
   {
-    title: 'login',
-    path: '/login',
+    title: 'account',
+    path: '/abogado-page/account',
     icon: getIcon('eva:lock-fill'),
   },
   {
