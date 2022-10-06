@@ -17,7 +17,7 @@ export const provinciasList = [
   "Napo",
   "Sucumbíos",
   "Pastaza",
-  "Pinchincha",
+  "Pichincha",
   "Santa Elena",
   "Santo Domingo",
   "Francisco De Orellana",
@@ -54,7 +54,7 @@ export const abogadosList = [
     city: 'Quito',
     province: 'Pichincha',
     especialidad: ["Derecho Administrativo", "Derecho Penal"],
-    rating: "2🌟"
+    rating: "3⭐"
   },
   {
     id: 2,
@@ -66,7 +66,7 @@ export const abogadosList = [
     province: 'Tungurahua',
     phoneNumber: "59396923i283",
     especialidad: ["Derecho Internacional Publico", "Derecho Mercantil"],
-    rating: "2🌟"
+    rating: "3⭐"
   },
   {
     id: 3,
@@ -78,7 +78,7 @@ export const abogadosList = [
     province: 'Carchi',
     phoneNumber: "5939692234283",
     especialidad: ["Derecho de Familia", "Derecho Civil"],
-    rating: "2🌟"
+    rating: "5⭐"
   },
   {
     id: 4,
@@ -89,8 +89,8 @@ export const abogadosList = [
     city: 'Carchi',
     province: 'Carchi',
     phoneNumber: "5939692234283",
-    especialidad: ["Derecho de Familia", "Derecho Civil"],
-    rating: "2🌟"
+    especialidad: ["Derecho Civil", "Transito"],
+    rating: "3⭐"
   },
   {
     id: 5,
@@ -101,8 +101,8 @@ export const abogadosList = [
     city: 'Carchi',
     province: 'Carchi',
     phoneNumber: "5939692234283",
-    especialidad: ["Derecho de Familia", "Derecho Civil"],
-    rating: "2🌟"
+    especialidad: ["Derecho Internacional Publico", "Derecho Sucesorio"],
+    rating: "4⭐"
   },
   {
     id: 6,
@@ -113,8 +113,8 @@ export const abogadosList = [
     city: 'Carchi',
     province: 'Carchi',
     phoneNumber: "5939692234283",
-    especialidad: ["Derecho de Familia", "Derecho Civil"],
-    rating: "2🌟"
+    especialidad: ["Derecho Tributario", "Derecho Mercantil"],
+    rating: "5⭐"
   },
 
 ]

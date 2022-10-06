@@ -20,8 +20,6 @@ const ProductImgStyle = styled('img')({
 
   export default function AbogadoCard({ details }) {
 
-    // console.log(details)
-
     const { name, 
             profileImage, 
             description, 
@@ -37,17 +35,18 @@ const ProductImgStyle = styled('img')({
                 <ProductImgStyle alt={name} src={profileImage} />
             </Box>
 
-            <Stack spacing={2} sx={{ p:3 }}>
+            <Stack spacing={2} sx={{ p:1 }}>
                 <Typography variant="subtitle1" noWrap>
                 {name}
                 </Typography>
-
+                <Typography variant="subtitle1" noWrap>
+                {email}
+                </Typography>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     {
-                        especialidad.map(item => <Typography variant="subtitle2">{item}</Typography>)
+                        especialidad.map((item, index) => <Typography key={index} variant="subtitle2">{item}</Typography>)
                     }
                 </Stack>
-
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="subtitle1">
                     {/* <Typography
@@ -60,6 +59,9 @@ const ProductImgStyle = styled('img')({
                     > */}
                     {`${city}, ${province}`}
                     {/* </Typography> */}
+                </Typography>
+                <Typography variant="subtitle1">
+                    {rating}
                 </Typography>
                 </Stack>
 

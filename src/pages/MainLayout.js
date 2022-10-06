@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
-import Container from '@mui/material/Container';
+// import Container from '@mui/material/Container';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
@@ -14,14 +15,15 @@ import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import AbogadoCardList from '../components/AbogadoCardList'
 import { abogadosList } from '../constants';
+import EmptyView from '../components/EmptyView'
 // import FeaturedPost from './FeaturedPost';
 // import Main from './Main';
-import Sidebar from './Sidebar';
-import Footer from './Footer';
+// import Sidebar from './Sidebar';
+// import Footer from './Footer';
+// import { List } from '@mui/material';
 // import post1 from './blog-post.1.md';
 // import post2 from './blog-post.2.md';
 // import post3 from './blog-post.3.md';
-
 const sections = [
   { title: 'Technology', url: '#' },
   { title: 'Design', url: '#' },
@@ -100,12 +102,54 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function MainLayout() {
+  // Variables to set the search values
+  const [provincia, setProvincia] = useState('');
+  const [materia, setMateria] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const [list, setList] = useState(abogadosList);
+  const [resultFound, setResultFound] = useState(false)
+
+  const handleInputClearClick = ()=> {
+    setInputValue('')
+  }
+
+  const handleMateriaClearClick = () => {
+    setMateria('')
+  }
+
+  const handleProvinciaClearClick = () => {
+    setProvincia('')
+  }
+
+  const applyFilters = () => {
+
+    let updatedList = abogadosList
+
+    if(provincia) {
+        updatedList = updatedList.filter(item => item.province.toLowerCase().trim() === provincia.toLowerCase().trim())
+    }
+
+    if(materia) {
+      updatedList = updatedList.filter(item => item.especialidad.includes(materia))
+    }
+
+    setList(updatedList)
+
+    !updatedList.length ? setResultFound(false) : setResultFound(true); 
+  }
+
+
+  useEffect(() => {
+
+    applyFilters()
+
+  },[provincia, materia])
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{ flexGrow: 1 }}>
-
-     ` <Grid container spacing={2}>
+        <Grid container spacing={2}>
         <Grid item xs={12}>
           <Header title="Abogado Directo" sections={sections} />
           <main>
@@ -113,12 +157,22 @@ export default function MainLayout() {
         </main>
         </Grid>
         <Grid item xs={12}lg={2}>
-        <SearchBar />
+        <SearchBar
+          inputValue={inputValue}
+          changeInput={e => setInputValue(e.target.value)}
+          handleInputClearClick={handleInputClearClick}
+          provincia={provincia}
+          handleChangeProvincia={e => setProvincia(e.target.value)}
+          handleProvinciaClearClick={handleProvinciaClearClick}
+          materia = {materia}
+          handleChangeMateria = {e => setMateria(e.target.value)}
+          handleMateriaClearClick={handleMateriaClearClick}
+        />
         </Grid>
         <Grid item xs={12} lg={10}>
-          <AbogadoCardList details = {abogadosList}/>
+          {resultFound ? <AbogadoCardList details = {list}/> : <EmptyView/>}
         </Grid>
-      </Grid>`
+      </Grid>
       </Box>
       {/* <Container >
         hola

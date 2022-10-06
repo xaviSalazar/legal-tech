@@ -2,33 +2,28 @@ import React, {useState} from "react";
 import SearchIcon from '@mui/icons-material/Search';
 //import './styles.css'
 import Input from '@mui/material/Input';
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { provinciasList } from "../../constants";
 import { materiasList } from "../../constants";
+import ClearIcon from '@mui/icons-material/Clear';
 
 
-const SearchBar = ({value, changeInput}) => {
-
-    const [provincia, setProvincia] = useState('');
-    const [materia, setMateria] = useState('');
-    const [listaProvincias, SetListaProvincias] = useState(provinciasList)
-    const [listaMaterias, setListaMaterias] = useState(materiasList)
-
-    const handleChange = (event) => {
-        setProvincia(event.target.value);
-      };
-
-    const handleChangeMateria = (event) => {
-        setMateria(event.target.value)
-    }
-    
+const SearchBar = ({
+        inputValue, 
+        changeInput,
+        handleInputClearClick,
+        provincia,
+        handleChangeProvincia,
+        handleProvinciaClearClick,
+        materia,
+        handleChangeMateria,
+        handleMateriaClearClick}) => {
 
     return (
-       
              <Box
                 // sx={{
                 // width: 300,
@@ -47,8 +42,9 @@ const SearchBar = ({value, changeInput}) => {
             <SearchIcon className="searchBar-icon"/>
             <Input 
                 type="text" 
-                placeholder="Busca por especialidad" 
-                value={value} 
+                placeholder="Buscador" 
+                value={inputValue} 
+                endAdornment= {<IconButton sx={{visibility: inputValue?"visible":"hidden"}} onClick={handleInputClearClick}><ClearIcon/></IconButton>}
                 onChange={changeInput} 
             />
 
@@ -59,10 +55,11 @@ const SearchBar = ({value, changeInput}) => {
                 id="provincia-simple-select"
                 value={provincia}
                 label="Provincia"
-                onChange={handleChange}
+                onChange={handleChangeProvincia}
+                endAdornment= {<IconButton sx={{visibility: provincia?"visible":"hidden"}} onClick={handleProvinciaClearClick}><ClearIcon/></IconButton>}
             >
-                {provinciasList.map(provincia => <MenuItem value={provincia}>{provincia}</MenuItem>)
-                }
+                {provinciasList.map((provincia, index) => 
+                                <MenuItem key = {index} value={provincia}>{provincia}</MenuItem>)}
             </Select>
         </FormControl>
 
@@ -74,8 +71,10 @@ const SearchBar = ({value, changeInput}) => {
                 value={materia}
                 label="materia"
                 onChange={handleChangeMateria}
+                endAdornment= {<IconButton sx={{visibility: materia?"visible":"hidden"}} onClick={handleMateriaClearClick}><ClearIcon/></IconButton>}
             >
-                {materiasList.map(materia => <MenuItem value={materia}>{materia}</MenuItem>)
+                {materiasList.map((materia,index) => 
+                                <MenuItem key={index} value={materia}>{materia}</MenuItem>)
                 }
             </Select>
         </FormControl>
