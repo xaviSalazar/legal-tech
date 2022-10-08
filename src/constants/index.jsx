@@ -25,6 +25,24 @@ export const provinciasList = [
   "Zamora Chinchipe",
 ]
 
+export const registerObject = {
+  name: '',
+  email: '',
+  birthDate:'',
+  image_url: '',
+  phoneNumber: '',
+  subjects: [],
+  city: '',
+  province: '',
+  userMod: '',
+  career: '',
+  education: '',
+  work: '',
+  description:'',
+  appointmentCost: '',
+  remoteWork: false,
+}
+
 export const materiasList = [
 "Derecho Administrativo",
 "Derecho Penal",

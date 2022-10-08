@@ -1,7 +1,6 @@
 // material
-import { Stack, Button, Divider, Typography } from '@mui/material';
+import { Stack, Divider, Typography } from '@mui/material';
 // component
-import Iconify from '../../components/Iconify';
 
 import FacebookLogin from 'react-facebook-login';
 

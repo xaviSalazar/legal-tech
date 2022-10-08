@@ -12,7 +12,6 @@ import {
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
-
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -20,22 +19,6 @@ import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
 
 import { provinciasList } from '../../../constants';
-
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'new-york',
-    label: 'New York'
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco'
-  }
-];
-
 
 
 
@@ -62,19 +45,6 @@ const MenuProps = {
 
 
 export default function MultipleSelectChip(personName, setPersonName) {
-
-  // const names = [
-  //   'Oliver Hansen',
-  //   'Van Henry',
-  //   'April Tucker',
-  //   'Ralph Hubbard',
-  //   'Omar Alexander',
-  //   'Carlos Abbott',
-  //   'Miriam Wagner',
-  //   'Bradley Wilkerson',
-  //   'Virginia Andrews',
-  //   'Kelly Snyder',
-  // ];
 
   const names = [
     "Derecho Administrativo",
@@ -208,21 +178,6 @@ export const AccountProfileDetails = (props) => {
             >
             { MultipleSelectChip(personName,setPersonName)}
             </Grid>
-            {/* <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Last name"
-                name="lastName"
-                onChange={handleChange}
-                required
-                value={values.lastName}
-                variant="outlined"
-              />
-            </Grid> */}
             <Grid
               item
               md={6}
@@ -304,14 +259,12 @@ export const AccountProfileDetails = (props) => {
                   id="outlinednumber"
                   label="Costo por primera consulta"
                   type="number"
+                  required
                   InputProps={{
                     startAdornment:
                     <InputAdornment position="start">$</InputAdornment>,
                     shrink: true,
                   }}
-                //   InputLabelProps={{
-                //     shrink: true,
-                //   }}
                 />
             </Grid>
             <Grid

@@ -1,10 +1,15 @@
 // import Head from 'next/head';
 import { Box, Container, Grid, Typography } from '@mui/material';
+import { useEffect } from 'react';
 import { AccountProfile } from '../components/Account/AccountProfile';
 import { AccountProfileDetails } from '../components/Account/AccountProfileDetails';
 
 
 const Account = () => {
+
+    useEffect(() => {
+      console.log(`useEffect Account page`)
+    }, [])
 
     return (
  
