@@ -1,15 +1,12 @@
 // import Head from 'next/head';
 import { Box, Container, Grid, Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AccountProfile } from '../components/Account/AccountProfile';
 import { AccountProfileDetails } from '../components/Account/AccountProfileDetails';
+import { httpManager } from '../managers/httpManager';
 
 
 const Account = () => {
-
-    useEffect(() => {
-      console.log(`useEffect Account page`)
-    }, [])
 
     return (
  
@@ -37,7 +34,7 @@ const Account = () => {
             md={6}
             xs={12}
           >
-            <AccountProfile />
+          <AccountProfile />
           </Grid>
           <Grid
             item
@@ -45,7 +42,7 @@ const Account = () => {
             md={6}
             xs={12}
           >
-            <AccountProfileDetails />
+            <AccountProfileDetails/>
           </Grid>
         </Grid>
       </Container>

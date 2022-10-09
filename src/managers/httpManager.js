@@ -32,6 +32,19 @@ const logoutUser = async(data) => {
     return await axios.get(`${API_BASE_URL}/logout`, data)
 }
 
+const getPresignedUrl = async (fileName) => {
+    return await axios.get(`${API_BASE_URL}/get-signed-url?fileName=${fileName}`)
+}
+
+const uploadFileFromBrowser = async (url, file) => {
+    return await axios.post(url, file)
+}
+
+const updateProfilePicture = async(data) => {
+    return await axios.post(`${API_BASE_URL}/change-profile-picture`, data)
+}
+
+
 export const httpManager = {
     facebookLogin,
     registerCustomer,
@@ -39,5 +52,8 @@ export const httpManager = {
     loginUser,
     googleLogin,
     customerAuth,
-    logoutUser
+    logoutUser,
+    getPresignedUrl,
+    uploadFileFromBrowser,
+    updateProfilePicture
 };

@@ -106,7 +106,7 @@ export default function HelperRegisterForm({handleChange,
                             setMateria}) { 
 
 
-    const {userMod} = values
+    const {userMod, phoneNumber} = values
 
     return (
                 
@@ -123,6 +123,7 @@ export default function HelperRegisterForm({handleChange,
             name="phoneNumber"
             label="Numero de Celular"
             defaultCountry='ec' 
+            value={phoneNumber}
             sx={{
                 '& .MuiPhoneNumber-flagButton': {
                     maxWidth: '10px' ,

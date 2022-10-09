@@ -6,7 +6,7 @@ import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@
 // components
 import MenuPopover from '../../MenuPopover';
 // mocks_
-import account from '../../../_mock/account';
+// import account from '../../../_mock/account';
 import { httpManager } from '../../../managers/httpManager';
 
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +34,7 @@ const MENU_OPTIONS = [
 
 // ----------------------------------------------------------------------
 
-export default function AccountPopover() {
+export default function AccountPopover({account}) {
   const anchorRef = useRef(null);
 
   const [open, setOpen] = useState(null);
@@ -60,9 +60,6 @@ export default function AccountPopover() {
     if(loggingout['data']['responseCode'] === 200) {
       navigate('/') 
     }
-    
-    console.log(loggingout)
-
   }
 
   return (
@@ -85,7 +82,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src={account.image_url} alt="photoURL" />
       </IconButton>
 
       <MenuPopover
@@ -104,7 +101,7 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {account.name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {account.email}
@@ -124,7 +121,7 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
-          Logout
+          Cerrar sesion
         </MenuItem>
       </MenuPopover>
     </>

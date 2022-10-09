@@ -8,6 +8,7 @@ import { Button, Typography, Container, Box } from '@mui/material';
 import Page from '../components/Page';
 import TalentNavbar from '../components/TalentPage/NavBar'
 import TalentSidebar from '../components/TalentPage/SiderBar';
+import { httpManager } from '../managers/httpManager';
 
 // ----------------------------------------------------------------------
 
@@ -48,15 +49,34 @@ const MainStyle = styled('div')(({ theme }) => ({
 export default function TalentPage() {
 
   const [open, setOpen] = useState(false);
+  const [account, setAccount] = useState("")
 
   useEffect(() => {
-    console.log(`talent page useEffect`)
-  },[])
+
+    console.log(`Talent page useEffect`)
+    const token = localStorage.getItem('customerToken')
+    console.log(token)
+    const config = {
+          headers: {Authorization: `Bearer ${token}`}
+    }
+
+    const authenticate = async () => {
+      return await httpManager.customerAuth(config)
+    }
+    
+    authenticate()
+    .then(response => {if(response['data']['responseCode'] === 200)
+
+    console.log(`authenticated`)
+    setAccount(response['data']['responseData'])
+    console.log(response['data']['responseData'])
+    })
+  }, [])
 
   return (
     <RootStyle>
-      <TalentNavbar onOpenSidebar={() => setOpen(true)} />
-      <TalentSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
+      <TalentNavbar onOpenSidebar={() => setOpen(true)} account={account}/>
+      <TalentSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} account = {account}/>
       <MainStyle>
         <Outlet />
       </MainStyle>
