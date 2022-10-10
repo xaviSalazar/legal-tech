@@ -44,6 +44,10 @@ const updateProfilePicture = async(data) => {
     return await axios.post(`${API_BASE_URL}/change-profile-picture`, data)
 }
 
+const updateAbogadoProfile = async(data) => {
+    return await axios.post(`${API_BASE_URL}/update-abogado-profile`, data)
+}
+
 
 export const httpManager = {
     facebookLogin,
@@ -55,5 +59,6 @@ export const httpManager = {
     logoutUser,
     getPresignedUrl,
     uploadFileFromBrowser,
-    updateProfilePicture
+    updateProfilePicture,
+    updateAbogadoProfile
 };

@@ -11,8 +11,6 @@ import {
   
 } from '@mui/material';
 import { httpManager } from '../../../managers/httpManager';
-import InputAdornment from '@mui/material/InputAdornment';
-import { useTheme } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
 import { registerObject } from '../../../constants';
 import { provinciasList } from '../../../constants';
@@ -23,6 +21,8 @@ export const AccountProfileDetails = (props) => {
   const [values, setValues] = useState(registerObject)
   const [materia, setMateria] = useState([]);
   const [checked, setChecked] = useState(false)
+
+  console.log(values)
 
   useEffect(() => {
     console.log(`Account details page useEffect`)
@@ -36,11 +36,19 @@ export const AccountProfileDetails = (props) => {
     
     authenticate()
     .then(response => {
-      if(response['data']['responseCode'] === 200)
+      if(response['data']['responseCode'] === 200) 
+      {
+       const newVal = response['data']['responseData']
+       delete newVal.isVerified
+       delete newVal.userMode
+       delete newVal.birthDate
+       delete newVal.emailToken
+       delete newVal.image_url
       setValues(response['data']['responseData'])
       setChecked(response['data']['responseData']['remoteWork'])
       setMateria(response['data']['responseData']['subjects'])
       console.log(response['data']['responseData'])
+      }
      })
   }, [])
 
@@ -79,6 +87,16 @@ export const AccountProfileDetails = (props) => {
       [event.target.name]: event.target.value
     });
   };
+
+  const handleSaveDetails = async () =>{
+    console.log(`enviar`)
+    console.log(values)
+    const backendResponse = await httpManager.updateAbogadoProfile(values)
+    if(backendResponse['data']['responseCode'] === 200) {
+      alert(`profile updated`)
+    }
+
+  }
 
   return (
     <FormControl
@@ -197,6 +215,7 @@ export const AccountProfileDetails = (props) => {
           <Button
             color="primary"
             variant="contained"
+            onClick={handleSaveDetails}
           >
             Save details
           </Button>
