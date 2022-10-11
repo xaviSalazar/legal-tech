@@ -16,9 +16,14 @@ const navConfig = [
   //   path: '/dashboard/user',
   //   icon: getIcon('eva:people-fill'),
   // },
+  // {
+  //   title: 'product',
+  //   path: '/abogado-page/products',
+  //   icon: getIcon('eva:briefcase-fill'),
+  // },
   {
-    title: 'product',
-    path: '/abogado-page/products',
+    title: 'documentos',
+    path: '/cliente-page/documentos',
     icon: getIcon('eva:briefcase-fill'),
   },
   // {
@@ -27,8 +32,8 @@ const navConfig = [
   //   icon: getIcon('eva:file-text-fill'),
   // },
   {
-    title: 'account',
-    path: '/abogado-page/account',
+    title: 'cuenta',
+    path: '/cliente-page/account',
     icon: getIcon('eva:people-fill'),
     // icon: getIcon('eva:lock-fill'),
   },

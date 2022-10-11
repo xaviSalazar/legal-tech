@@ -1,7 +1,7 @@
-import { Navigate, useRoutes } from 'react-router-dom';
+import {  useRoutes } from 'react-router-dom';
 // layouts
 // import DashboardLayout from './layouts/dashboard';
-import LogoOnlyLayout from './layouts/LogoOnlyLayout';
+// import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 // //
 // import Blog from './pages/Blog';
 // import User from './pages/User';
@@ -14,6 +14,7 @@ import SocialForm from './sections/auth/register/RegisterSocialForm'
 import TalentPage from './pages/TalentPage'
 import ClientPage from './pages/ClientPage';
 import Account from './pages/Account';
+import Templates from './pages/Templates';
 // import DashboardApp from './pages/DashboardApp';
 
 
@@ -63,8 +64,12 @@ export default function Router() {
     },
     {
       path: 'cliente-page',
-      element: <ClientPage />
-    }
+      element: <ClientPage />,
+      children: [
+        { path: 'documentos', element: <Templates/> },
+        { path: 'account',element: <Account /> },
+      ],
+    },
     // {
     //   path: '*',
     //   element: <Navigate to="/404" replace />,
