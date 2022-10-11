@@ -149,14 +149,23 @@ export default function MainLayout() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2}>
-        <Grid item xs={12}>
+        <Grid Box spacing={2}>
+        <Grid item xs={12} lg = {12}>
           <Header title="Abogado Directo" sections={sections} />
           <main>
           <MainFeaturedPost post={mainFeaturedPost} />
         </main>
         </Grid>
-        <Grid item xs={12}lg={2}>
+        <Box
+                sx={{
+                height: 250,
+                p:2,
+                position: '-webkit-sticky',
+                position: 'sticky',
+                top: 0,
+                }}
+            >
+        <Grid item xs={12}lg={12}>
         <SearchBar
           inputValue={inputValue}
           changeInput={e => setInputValue(e.target.value)}
@@ -169,9 +178,12 @@ export default function MainLayout() {
           handleMateriaClearClick={handleMateriaClearClick}
         />
         </Grid>
-        <Grid item xs={12} lg={10}>
+         </Box>
+        
+        <Grid item xs={12} lg={12}>
           {resultFound ? <AbogadoCardList details = {list}/> : <EmptyView/>}
         </Grid>
+        
       </Grid>
       </Box>
       {/* <Container >
