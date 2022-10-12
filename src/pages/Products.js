@@ -49,7 +49,7 @@ import React, { useState } from "react";
 import { Logger } from "logging-library";
 import FileViewer from "react-file-viewer";
 import { CustomErrorComponent } from "custom-error";
-import DocViewer from "react-doc-viewer";
+// import DocViewer from "react-doc-viewer";
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import PizZipUtils from 'pizzip/utils/index.js';
@@ -57,11 +57,13 @@ import { saveAs } from 'file-saver';
 
 
 const EcommerceShop = () => {
+
   function loadFile(url, callback) {
     PizZipUtils.getBinaryContent(url, callback);
   }
   
   const generateDocument = () => {
+
     loadFile(
       // 'https://docxtemplater.com/tag-example.docx',
       'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION+MODIFICABLE+.docx',

@@ -1,7 +1,9 @@
 import { Box, Container } from '@mui/material';
 import { TemplatesListTable } from '../components/Templates/TemplatesListTable';
 import TemplateSearchBar from '../components/Templates/TemplateSearchBar';
+
 const Templates = () => {
+
     return (
     <>
       <Box
@@ -14,7 +16,7 @@ const Templates = () => {
         <Container maxWidth={false}>
             <TemplateSearchBar />
           <Box sx={{ mt: 3 }}>
-            <TemplatesListTable  />
+            <TemplatesListTable />
           </Box>
         </Container>
       </Box>

@@ -1,13 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
+////// docxtemplater
+import Docxtemplater from 'docxtemplater';
+import PizZip from 'pizzip';
+import PizZipUtils from 'pizzip/utils/index.js';
+import { saveAs } from 'file-saver';
+// httpManager
+import { httpManager } from '../../managers/httpManager';
 //-----------------------product template viewer
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import { Container, Typography } from '@mui/material';
+//
+import uuid from 'react-uuid';
 import {
   Box,
   Card,
@@ -22,7 +31,6 @@ import {
 } from '@mui/material';
 
 const styles = {
-
   top: 28,
   right: 0,
   left: 0,
@@ -31,10 +39,103 @@ const styles = {
   bgcolor: 'background.paper',
 };
 
-const EcommerceShop=() => {
-  const docs = [
-    { uri: "https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION+MODIFICABLE+.docx"} 
-  ];
+
+const handleUpdateGeneratedS3 = async (file_, setVisualiseDocument) => {
+
+  const original_uuid = uuid()
+  const promise = new Promise ( async (resolve, reject) => {
+  const {data} = await httpManager.getPresignedUrl(`${original_uuid}/documento_prueba.docx`)   
+  const pipe = {
+      bucket: "myawsbucketwhatsapp",
+      ...data.fields,
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      file: file_
+  };
+  const formData = new FormData();
+  for (const name in pipe) {
+      formData.append(name, pipe[name]);
+  }
+  const {status} = await httpManager.uploadFileFromBrowser(data.url, formData)
+  if(status === 204) { 
+    resolve([{"uri": `https://d1d5i0xjsb5dtw.cloudfront.net/${original_uuid}/documento_prueba.docx`}])
+  //   await httpManager.updateProfilePicture({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": values._id})
+  //   resolve({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": values._id}) 
+  } else {reject("error loading to S3")} 
+
+});
+
+promise.then((d) => {
+  console.log(d)
+  setVisualiseDocument(d)
+});
+
+}
+
+function loadFile(url, callback) {
+  PizZipUtils.getBinaryContent(url, callback);
+}
+
+const generateDocument = async (document, champsToFill, setVisualiseDocument) => {
+  loadFile(
+    // 'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION+MODIFICABLE+.docx',
+    document[0]['uri'],
+    function (error, content) {
+      if (error) {
+        throw error;
+      }
+      var zip = new PizZip(content);
+      var doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+      });
+      // REPLACE DATA WITH JSON
+      doc.setData(champsToFill);
+      try {
+        // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+        doc.render();
+      } catch (error) {
+        // The error thrown here contains additional information when logged with JSON.stringify (it contains a properties object containing all suberrors).
+        function replaceErrors(key, value) {
+          if (value instanceof Error) {
+            return Object.getOwnPropertyNames(value).reduce(function (
+              error,
+              key
+            ) {
+              error[key] = value[key];
+              return error;
+            },
+            {});
+          }
+          return value;
+        }
+        // console.log(JSON.stringify({ error: error }, replaceErrors));
+
+        if (error.properties && error.properties.errors instanceof Array) {
+          const errorMessages = error.properties.errors
+            .map(function (error) {
+              return error.properties.explanation;
+            })
+            .join('\n');
+          console.log('errorMessages', errorMessages);
+          // errorMessages is a humanly readable message looking like this :
+          // 'The tag beginning with "foobar" is unopened'
+        }
+        throw error;
+      }
+      var out = doc.getZip().generate({
+        type: 'blob',
+        mimeType:
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      }); //Output the document using Data-URI
+      handleUpdateGeneratedS3(out, setVisualiseDocument)
+    }
+  );
+};
+
+
+const DocumentViewer = ({docs}) => {
+
+  // const docs = [{ uri: "https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION+MODIFICABLE+.docx"}];
 
   return (
             <DocViewer  
@@ -50,88 +151,112 @@ const docList =[
     id: 1,
     name: 'Autorizacion_ejemplo',
     category: 'Derecho Civil',
-    campos: ['nombres_completos', 
+    uri: 'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION_example.docx',
+    campos: ['nombres_completos', 'cedula',
     'nacionalidad', 'estado_civil',
      'domicilio', 'telefono', 
      'correo_electronico', 'persona_poder',
     'persona_recibe_poder', 'cedula_poder', 
     'estado_civil_poder','numero_celular']
   },
-  {
-    id: 2,
-    name: 'Acta de desarrollo',
-    category: 'Derecho Civil',
-    campos: ['nombres_completos', 
-    'nacionalidad', 'estado_civil',
-     'domicilio', 'telefono', 
-     'correo_electronico', 'persona_poder',
-    'persona_recibe_poder', 'cedula_poder', 
-    'estado_civil_poder','numero_celular']
-  },
-  {
-    id: 3,
-    name: 'Notaria pdf',
-    category: 'Derecho Civil',
-    campos: ['nombres_completos', 
-    'nacionalidad', 'estado_civil',
-     'domicilio', 'telefono', 
-     'correo_electronico', 'persona_poder',
-    'persona_recibe_poder', 'cedula_poder', 
-    'estado_civil_poder','numero_celular']
-  }
+  // {
+  //   id: 2,
+  //   name: 'Acta de desarrollo',
+  //   category: 'Derecho Civil',
+  //   uri: 'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION_ejemplo+.docx',
+  //   campos: ['nombres_completos', 
+  //   'nacionalidad', 'estado_civil',
+  //    'domicilio', 'telefono', 
+  //    'correo_electronico', 'persona_poder',
+  //   'persona_recibe_poder', 'cedula_poder', 
+  //   'estado_civil_poder','numero_celular']
+  // },
+  // {
+  //   id: 3,
+  //   name: 'Notaria pdf',
+  //   category: 'Derecho Civil',
+  //   uri: 'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION_ejemplo+.docx',
+  //   campos: ['nombres_completos', 
+  //   'nacionalidad', 'estado_civil',
+  //    'domicilio', 'telefono', 
+  //    'correo_electronico', 'persona_poder',
+  //   'persona_recibe_poder', 'cedula_poder', 
+  //   'estado_civil_poder','numero_celular']
+  // }
 ]
 
 
-export const TemplatesListTable = ({ ...rest }) => {
+export const TemplatesListTable = ({...rest }) => {
+
+
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
   const [singleDocument, setSingleDocument] = useState([])
+  const [visualiseDocument, setVisualiseDocument] = useState([])
+  const [champsToFill, setChampsToFill] = useState({})
+  const [example, setExample] = useState({})
+  const wordDoc = useMemo( () => <DocumentViewer docs = {visualiseDocument} />, [visualiseDocument])
 
   
   const handleClick = (e, id) => {
     setOpen((prev) => !prev);
-    const doc = docList.filter(item => item.id === id )
+    const doc = docList.filter(item => item.id === id)
+    const campos_obj = doc[0].campos.reduce((accumulator, value) => {
+      return {...accumulator, [value]: ''}
+    }, {});
+    const uri = doc.map(({uri}) => uri)
+    setChampsToFill(campos_obj)
+    setVisualiseDocument([{"uri": uri[0]}])
     setSingleDocument(doc)
-    console.log(doc)
-    console.log(id)
   };
 
   const handleClickAway = () => {
     setOpen(false);
   };
 
- 
+  const handleChange = (e) => {
+    setChampsToFill({...champsToFill, [e.target.name]: e.target.value})
+  }
 
-    const champsToFillbyUser = singleDocument[0] && singleDocument[0].campos.map(
+  const champsToFillbyUser = singleDocument[0] && singleDocument[0].campos.map(
       (item, index) => {
-        return <TextField key={index} required id="outlined-required" label={item} defaultValue=""/>
+        return <TextField 
+                  key={index} 
+                  required
+                  label={item} 
+                  name={item}
+                  value={champsToFill[item]}
+                  onChange={e => handleChange(e)}
+                />
       })
 
-   
-
-    const handleLimitChange = (event) => {
+  const handleLimitChange = (event) => {
       setLimit(event.target.value);
     };
     
-    const handlePageChange = (event, newPage) => {
+  const handlePageChange = (event, newPage) => {
         setPage(newPage);
     };
+    const [selectedDocs, setSelectedDocs] = useState([]);
 
-
-
-return (
+return (  
   <ClickAwayListener onClickAway={handleClickAway}>
 
 {open ? (
           <Box sx={styles}>
-            <Button variant="contained" startIcon={<ModeEditOutlineOutlinedIcon />}>
-              Editar con mis datos
-            </Button>
             {singleDocument[0] && champsToFillbyUser}
-            <EcommerceShop />
-            
+            <Button 
+                variant="contained" 
+                startIcon={<ModeEditOutlineOutlinedIcon />}
+                onClick={e => generateDocument(visualiseDocument, champsToFill, setVisualiseDocument)}
+            >
+              Generar documento
+            </Button>     
+            {wordDoc}
+            {/* <DocumentViewer docs = {visualiseDocument} /> */}
           </Box>
+          
         ) : 
     <Card {...rest}>
       
@@ -233,8 +358,6 @@ return (
         </Box>
        
       </PerfectScrollbar>
-     
-    
         <TablePagination
         component="div"
         count={docList.length}
@@ -244,9 +367,6 @@ return (
         rowsPerPage={limit}
         rowsPerPageOptions={[5, 10, 25]}
         />
-      
-      
-       
     </Card>}
      </ClickAwayListener>
     
