@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -9,17 +9,19 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import PizZipUtils from 'pizzip/utils/index.js';
-import { saveAs } from 'file-saver';
+// import { saveAs } from 'file-saver';
 // httpManager
 import { httpManager } from '../../managers/httpManager';
 //-----------------------product template viewer
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
-import { Container, Typography } from '@mui/material';
+// import { Container, Typography } from '@mui/material';
 //
 import uuid from 'react-uuid';
 import {
+  Grid,
   Box,
   Card,
+  CardContent,
   Table,
   TableBody,
   TableCell,
@@ -29,6 +31,45 @@ import {
   Button,
   TextField
 } from '@mui/material';
+
+const docList =[
+  {
+    id: 1,
+    name: 'Autorizacion_ejemplo',
+    category: 'Derecho Civil',
+    uri: 'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION_example.docx',
+    campos: ['nombres_completos', 'cedula',
+    'nacionalidad', 'estado_civil',
+     'domicilio', 'telefono', 
+     'correo_electronico', 'persona_poder',
+    'persona_recibe_poder', 'cedula_poder', 
+    'estado_civil_poder','numero_celular']
+  },
+  // {
+  //   id: 2,
+  //   name: 'Acta de desarrollo',
+  //   category: 'Derecho Civil',
+  //   uri: 'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION_ejemplo+.docx',
+  //   campos: ['nombres_completos', 
+  //   'nacionalidad', 'estado_civil',
+  //    'domicilio', 'telefono', 
+  //    'correo_electronico', 'persona_poder',
+  //   'persona_recibe_poder', 'cedula_poder', 
+  //   'estado_civil_poder','numero_celular']
+  // },
+  // {
+  //   id: 3,
+  //   name: 'Notaria pdf',
+  //   category: 'Derecho Civil',
+  //   uri: 'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION_ejemplo+.docx',
+  //   campos: ['nombres_completos', 
+  //   'nacionalidad', 'estado_civil',
+  //    'domicilio', 'telefono', 
+  //    'correo_electronico', 'persona_poder',
+  //   'persona_recibe_poder', 'cedula_poder', 
+  //   'estado_civil_poder','numero_celular']
+  // }
+]
 
 const styles = {
   top: 28,
@@ -108,7 +149,7 @@ const generateDocument = async (document, champsToFill, setVisualiseDocument) =>
           }
           return value;
         }
-        // console.log(JSON.stringify({ error: error }, replaceErrors));
+        console.log(JSON.stringify({ error: error }, replaceErrors));
 
         if (error.properties && error.properties.errors instanceof Array) {
           const errorMessages = error.properties.errors
@@ -146,45 +187,6 @@ const DocumentViewer = ({docs}) => {
           )
 }
 
-const docList =[
-  {
-    id: 1,
-    name: 'Autorizacion_ejemplo',
-    category: 'Derecho Civil',
-    uri: 'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION_example.docx',
-    campos: ['nombres_completos', 'cedula',
-    'nacionalidad', 'estado_civil',
-     'domicilio', 'telefono', 
-     'correo_electronico', 'persona_poder',
-    'persona_recibe_poder', 'cedula_poder', 
-    'estado_civil_poder','numero_celular']
-  },
-  // {
-  //   id: 2,
-  //   name: 'Acta de desarrollo',
-  //   category: 'Derecho Civil',
-  //   uri: 'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION_ejemplo+.docx',
-  //   campos: ['nombres_completos', 
-  //   'nacionalidad', 'estado_civil',
-  //    'domicilio', 'telefono', 
-  //    'correo_electronico', 'persona_poder',
-  //   'persona_recibe_poder', 'cedula_poder', 
-  //   'estado_civil_poder','numero_celular']
-  // },
-  // {
-  //   id: 3,
-  //   name: 'Notaria pdf',
-  //   category: 'Derecho Civil',
-  //   uri: 'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION_ejemplo+.docx',
-  //   campos: ['nombres_completos', 
-  //   'nacionalidad', 'estado_civil',
-  //    'domicilio', 'telefono', 
-  //    'correo_electronico', 'persona_poder',
-  //   'persona_recibe_poder', 'cedula_poder', 
-  //   'estado_civil_poder','numero_celular']
-  // }
-]
-
 
 export const TemplatesListTable = ({...rest }) => {
 
@@ -195,7 +197,6 @@ export const TemplatesListTable = ({...rest }) => {
   const [singleDocument, setSingleDocument] = useState([])
   const [visualiseDocument, setVisualiseDocument] = useState([])
   const [champsToFill, setChampsToFill] = useState({})
-  const [example, setExample] = useState({})
   const wordDoc = useMemo( () => <DocumentViewer docs = {visualiseDocument} />, [visualiseDocument])
 
   
@@ -238,13 +239,23 @@ export const TemplatesListTable = ({...rest }) => {
   const handlePageChange = (event, newPage) => {
         setPage(newPage);
     };
-    const [selectedDocs, setSelectedDocs] = useState([]);
+
+    console.log(`visualizeDocument`)
+    console.log(visualiseDocument)
+    console.log(`champs to fill`)
+    console.log(champsToFill)
 
 return (  
   <ClickAwayListener onClickAway={handleClickAway}>
 
 {open ? (
-          <Box sx={styles}>
+          // <Box sx={styles}>
+          <Box>
+            <Card>
+              <CardContent>
+            <Grid container spacing={2}>
+            <Grid item xs={4}>
+            <Stack spacing={2}>
             {singleDocument[0] && champsToFillbyUser}
             <Button 
                 variant="contained" 
@@ -252,10 +263,18 @@ return (
                 onClick={e => generateDocument(visualiseDocument, champsToFill, setVisualiseDocument)}
             >
               Generar documento
-            </Button>     
+            </Button>   
+            </Stack>
+            </Grid>  
+            <Grid item xs={8}>
             {wordDoc}
+            </Grid>
             {/* <DocumentViewer docs = {visualiseDocument} /> */}
+            </Grid>
+            </CardContent>
+            </Card>
           </Box>
+
           
         ) : 
     <Card {...rest}>

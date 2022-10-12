@@ -12,7 +12,7 @@ import {
 
  const TemplateSearchBar = () => {
  return (
- <Box sx={{ mt: 3 }}>
+ <Box sx={{ mt: 1 }}>
  <Card>
    <CardContent>
      <Box sx={{ maxWidth: 500 }}>

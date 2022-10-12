@@ -10,12 +10,11 @@ const Templates = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          py: 8
         }}
       >
         <Container maxWidth={false}>
             <TemplateSearchBar />
-          <Box sx={{ mt: 3 }}>
+          <Box sx={{ mt: 1 }}>
             <TemplatesListTable />
           </Box>
         </Container>
