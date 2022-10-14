@@ -48,6 +48,13 @@ const updateAbogadoProfile = async(data) => {
     return await axios.post(`${API_BASE_URL}/update-abogado-profile`, data)
 }
 
+const retrieveUsers = async() => {
+    return await axios.get(`${API_BASE_URL}/retrieve-abogados`)
+}
+
+const createTicket = async(data) => {
+    return await axios.post(`${API_BASE_URL}/create-ticket`, data)
+}
 
 export const httpManager = {
     facebookLogin,
@@ -60,5 +67,7 @@ export const httpManager = {
     getPresignedUrl,
     uploadFileFromBrowser,
     updateProfilePicture,
-    updateAbogadoProfile
+    updateAbogadoProfile,
+    retrieveUsers,
+    createTicket
 };

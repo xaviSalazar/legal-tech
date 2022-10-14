@@ -4,7 +4,7 @@ import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutl
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
+import CloseIcon from '@mui/icons-material/Close';
 ////// docxtemplater
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
@@ -15,7 +15,7 @@ import { httpManager } from '../../managers/httpManager';
 //-----------------------product template viewer
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 // import { Container, Typography } from '@mui/material';
-//
+// google forms 
 import uuid from 'react-uuid';
 import {
   Grid,
@@ -29,8 +29,12 @@ import {
   TablePagination,
   TableRow,
   Button,
-  TextField
+  TextField,
+  Tab,
+  Tabs,
+  Typography
 } from '@mui/material';
+import SearcherAbogado from '../SearcherAbogado';
 
 const docList =[
   {
@@ -71,19 +75,22 @@ const docList =[
   // }
 ]
 
-const styles = {
-  top: 28,
-  right: 0,
-  left: 0,
-  zIndex: 1,
-  p: 1,
-  bgcolor: 'background.paper',
-};
+// const styles = {
+//   top: 28,
+//   right: 0,
+//   left: 0,
+//   zIndex: 1,
+//   p: 1,
+//   bgcolor: 'background.paper',
+// };
 
 
-const handleUpdateGeneratedS3 = async (file_, setVisualiseDocument) => {
+const handleUpdateGeneratedS3 = async (file_, setVisualiseDocument, setTicketNumber) => {
+
+  console.log(`upload to S3`)
 
   const original_uuid = uuid()
+  setTicketNumber(original_uuid)
   const promise = new Promise ( async (resolve, reject) => {
   const {data} = await httpManager.getPresignedUrl(`${original_uuid}/documento_prueba.docx`)   
   const pipe = {
@@ -116,7 +123,7 @@ function loadFile(url, callback) {
   PizZipUtils.getBinaryContent(url, callback);
 }
 
-const generateDocument = async (document, champsToFill, setVisualiseDocument) => {
+const generateDocument = async (document, champsToFill, setVisualiseDocument, setTicketNumber) => {
   loadFile(
     // 'https://d1d5i0xjsb5dtw.cloudfront.net/AUTORIZACION+MODIFICABLE+.docx',
     document[0]['uri'],
@@ -168,7 +175,7 @@ const generateDocument = async (document, champsToFill, setVisualiseDocument) =>
         mimeType:
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       }); //Output the document using Data-URI
-      handleUpdateGeneratedS3(out, setVisualiseDocument)
+      handleUpdateGeneratedS3(out, setVisualiseDocument, setTicketNumber)
     }
   );
 };
@@ -188,15 +195,23 @@ const DocumentViewer = ({docs}) => {
 }
 
 
-export const TemplatesListTable = ({...rest }) => {
+export const TemplatesListTable = ({userDetails, ...rest }) => {
 
+  console.log(userDetails)
 
+  const [list, setList] = useState([]);
+  const [ticketNumber, setTicketNumber] = useState('')
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(5);
   const [singleDocument, setSingleDocument] = useState([])
   const [visualiseDocument, setVisualiseDocument] = useState([])
+  const [editableDoc, setEditableDoc] =  useState([])
   const [champsToFill, setChampsToFill] = useState({})
+  const [tabIndex, setTabIndex] = useState(0);
+
+ 
+
   const wordDoc = useMemo( () => <DocumentViewer docs = {visualiseDocument} />, [visualiseDocument])
 
   
@@ -209,12 +224,13 @@ export const TemplatesListTable = ({...rest }) => {
     const uri = doc.map(({uri}) => uri)
     setChampsToFill(campos_obj)
     setVisualiseDocument([{"uri": uri[0]}])
+    setEditableDoc([{"uri": uri[0]}])
     setSingleDocument(doc)
   };
 
-  const handleClickAway = () => {
-    setOpen(false);
-  };
+  // const handleClickAway = () => {
+  //   setOpen(false);
+  // };
 
   const handleChange = (e) => {
     setChampsToFill({...champsToFill, [e.target.name]: e.target.value})
@@ -232,6 +248,19 @@ export const TemplatesListTable = ({...rest }) => {
                 />
       })
 
+  const VerifyUserData = () => {
+    let array = []
+    for (const key in champsToFill){
+       array.push(<TextField  
+              label={key} 
+              name={key}
+              disabled={true}
+              value={champsToFill[key]}
+            />)
+    }
+    return array
+  }
+
   const handleLimitChange = (event) => {
       setLimit(event.target.value);
     };
@@ -240,46 +269,142 @@ export const TemplatesListTable = ({...rest }) => {
         setPage(newPage);
     };
 
-    console.log(`visualizeDocument`)
-    console.log(visualiseDocument)
-    console.log(`champs to fill`)
-    console.log(champsToFill)
+  const handleSubmit = async(event) => {
+    event.preventDefault();
+    generateDocument(editableDoc, champsToFill, setVisualiseDocument, setTicketNumber)
+  }
+
+  const handleBuy = async(event) => {
+    console.log(`comprar`)
+    if(list.length === 1) {
+      // abogado
+      const Abogado = {name:list[0]['name'], 
+                       email:list[0]['email'], 
+                       phoneNumber:list[0]['phoneNumber'],
+                       userId: list[0]['_id'] }
+
+      const Cliente = {name:userDetails['name'], 
+                       email:userDetails['email'], 
+                       phoneNumber:userDetails['phoneNumber'],
+                       userId: userDetails['_id'] }
+
+      const ticketTransaction = {
+        ticketId: ticketNumber,
+        document: visualiseDocument[0]['uri'],
+        subject: `Documento a firmar`
+      }
+
+      const data = { Abogado: Abogado, Cliente: Cliente, ticketTransaction: ticketTransaction}
+      await httpManager.createTicket(data);
+    }
+
+  }
+
+  const handleTabChange = (event, newTabIndex) => {
+    setTabIndex(newTabIndex);
+  };
+
+    // console.log(`visualizeDocument`)
+    // console.log(visualiseDocument)
+    // console.log(`champs to fill`)
+    // console.log(champsToFill)
 
 return (  
-  <ClickAwayListener onClickAway={handleClickAway}>
-
+  // <ClickAwayListener onClickAway={handleClickAway}>
+  <Box>
 {open ? (
           // <Box sx={styles}>
           <Box>
-            <Card>
-              <CardContent>
-            <Grid container spacing={2}>
-            <Grid item xs={4}>
-            <Stack spacing={2}>
-            {singleDocument[0] && champsToFillbyUser}
-            <Button 
-                variant="contained" 
-                startIcon={<ModeEditOutlineOutlinedIcon />}
-                onClick={e => generateDocument(visualiseDocument, champsToFill, setVisualiseDocument)}
-            >
-              Generar documento
-            </Button>   
-            </Stack>
-            </Grid>  
-            <Grid item xs={8}>
-            {wordDoc}
-            </Grid>
-            {/* <DocumentViewer docs = {visualiseDocument} /> */}
-            </Grid>
-            </CardContent>
-            </Card>
+          <Box>
+          <Tabs value={tabIndex} onChange={handleTabChange}>
+          <Tab label="PASO 1: Genera tu documento" />
+          <Tab label="PASO 2: Elige tu abogado" />
+          <Tab label="PASO 3: Verifica y envia" />
+          </Tabs>
           </Box>
-
-          
+          <Box sx={{ padding: 2 }}>
+          {tabIndex === 0 && (
+          <Box>
+           <Card>
+           <IconButton onClick={() => setOpen((prev) => !prev)} ><CloseIcon/></IconButton>
+               <CardContent>
+             <Grid container spacing={2}>
+             <Grid item xs={4}>    
+             {singleDocument[0] &&  <form onSubmit={handleSubmit}>
+                                      <Stack spacing={1}>
+                                       {champsToFillbyUser}
+                                       <Button
+                                       variant="contained" 
+                                       type="submit"
+                                       startIcon={<ModeEditOutlineOutlinedIcon />}
+                                       >
+                                         Generar documento
+                                       </Button>
+                                       </Stack>
+                                     </form>}
+             </Grid>  
+             <Grid item xs={8}>
+             {wordDoc}
+             </Grid>
+             </Grid>
+             </CardContent>
+             </Card>
+          </Box>
+          )}
+          {tabIndex === 1 && (
+          <Box>
+            <SearcherAbogado list={list} setList={setList}/>
+          </Box>
+          )}
+          {tabIndex === 2 && (
+          <Box>
+            <Typography>The third tab</Typography>
+            <VerifyUserData />
+            {list.length === 1 ? (<Typography>{`su abogado es: ${list[0]['name']}`}</Typography>): (<Typography>Seleccione abogado</Typography>) }
+            <Button
+              onClick={handleBuy}
+              variant="contained" 
+            >
+              Enviar Documento 
+            </Button>
+          </Box>
+          )}
+          </Box>
+          </Box>
+          // <Box>
+          // <Card>
+          // <IconButton onClick={() => setOpen((prev) => !prev)} ><CloseIcon/></IconButton>
+          //     <CardContent>
+          //   <Grid container spacing={2}>
+          //   <Grid item xs={4}>    
+          //   {singleDocument[0] &&  <form onSubmit={handleSubmit}>
+          //                             <Stack spacing={1}>
+          //                             {champsToFillbyUser}
+          //                             <Button
+          //                             variant="contained" 
+          //                             type="submit"
+          //                             startIcon={<ModeEditOutlineOutlinedIcon />}
+          //                             >
+          //                               Generar documento
+          //                             </Button>
+          //                             <Button
+          //                               onClick={handleBuy}
+          //                               variant="contained" 
+          //                             >
+          //                               Comprar 
+          //                             </Button>
+          //                             </Stack>
+          //                           </form>}
+          //   </Grid>  
+          //   <Grid item xs={8}>
+          //   {wordDoc}
+          //   </Grid>
+          //   </Grid>
+          //   </CardContent>
+          //   </Card>
+          // </Box>     
         ) : 
     <Card {...rest}>
-      
-     
         <PerfectScrollbar>
         <Box sx={{ flexFlow: '1', overflowX: "scroll",}}>
           <Table >
@@ -372,10 +497,8 @@ return (
                 </TableRow>
               ))}
             </TableBody>
-           
           </Table>
-        </Box>
-       
+        </Box> 
       </PerfectScrollbar>
         <TablePagination
         component="div"
@@ -387,7 +510,8 @@ return (
         rowsPerPageOptions={[5, 10, 25]}
         />
     </Card>}
-     </ClickAwayListener>
+    </Box>
+    //  </ClickAwayListener>
     
 )
 

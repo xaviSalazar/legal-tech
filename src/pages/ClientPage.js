@@ -41,21 +41,17 @@ export default function ClientPage() {
   const [account, setAccount] = useState("")
 
   useEffect(() => {
-
     console.log(`Client page useEffect`)
     const token = localStorage.getItem('customerToken')
     console.log(token)
     const config = {
           headers: {Authorization: `Bearer ${token}`}
     }
-
     const authenticate = async () => {
       return await httpManager.customerAuth(config)
     }
-    
     authenticate()
     .then(response => {if(response['data']['responseCode'] === 200)
-
     console.log(`authenticated`)
     setAccount(response['data']['responseData'])
     console.log(response['data']['responseData'])

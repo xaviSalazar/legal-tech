@@ -14,7 +14,7 @@ import CardActionArea from '@mui/material/CardActionArea';
 
 
 
-const MyImage = ({ name,  profileImage}) => (
+const MyImage = ({ name,  image_url}) => (
       <LazyLoadImage
         alt={name}
         top= '0'
@@ -22,7 +22,7 @@ const MyImage = ({ name,  profileImage}) => (
         height='100%'
         object-fit= 'cover'
         position='absolute'
-        src={profileImage} // use normal <img> attributes as props
+        src={image_url} // use normal <img> attributes as props
         />
   );
 
@@ -40,6 +40,8 @@ const ProductImgStyle = styled('img')({
 
   export default function AbogadoCard({ details , setOpen, setAbogadoCard}) {
 
+  
+
     const handleClickOpen = (e) => {
         setOpen(true);
         setAbogadoCard(details)
@@ -47,15 +49,16 @@ const ProductImgStyle = styled('img')({
       };
 
     const { name, 
-            profileImage, 
+            image_url, 
             description, 
             email, 
             city, 
             province, 
-            especialidad, 
             phoneNumber,
+            subjects,
             rating, 
             id } = details;
+
     
     const handleFunction = (e) => {
                 console.log(details)
@@ -67,15 +70,15 @@ const ProductImgStyle = styled('img')({
         
         <Card sx={{ flexGrow: '1'}}  >
             {/* <Box sx={{pt: '100%', position: 'relative'}}> */}
-                {/* <MyImage name={name} profileImage={profileImage} handleFunction={handleFunction}/> */}
-                {/* <ProductImgStyle alt={name} src={profileImage} /> */}
+                {/* <MyImage name={name} image_url={image_url} handleFunction={handleFunction}/> */}
+                {/* <ProductImgStyle alt={name} src={image_url} /> */}
             {/* </Box> */}
             <CardActionArea onClick={e => handleClickOpen(e)}>
             <Grid container spacing={3} >
 
             <Grid item sm={3} md={3}>
             <Avatar sx={{ width: 150, height: 150 }}>
-            <MyImage name={name} profileImage={profileImage}/>
+            <MyImage name={name} image_url={image_url}/>
             </Avatar>
             <Stack spacing={2} sx={{ p:1 }}>
             <Typography variant="subtitle1" noWrap>
@@ -96,7 +99,7 @@ const ProductImgStyle = styled('img')({
                 </Typography>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
                     {
-                        especialidad.map((item, index) => <Typography key={index} variant="h5">{item}</Typography>)
+                        subjects?.map((item, index) => <Typography key={index} variant="h5">{item}</Typography>)
                     }
                 </Stack>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -120,7 +123,8 @@ const ProductImgStyle = styled('img')({
                 </Stack>
                 <Stack direction="row" alignItems="center" >
                 <Typography variant="body1">
-                    {rating}
+                    {/* {rating} */}
+                    RAT
                 </Typography>
                 </Stack>
                 

@@ -14,8 +14,9 @@ import SearchBar from '../components/SearchBar';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import AbogadoCardList from '../components/AbogadoCardList'
-import { abogadosList } from '../constants';
+// import { abogadosList } from '../constants';
 import EmptyView from '../components/EmptyView'
+import { httpManager } from '../managers/httpManager';
 // import FeaturedPost from './FeaturedPost';
 // import Main from './Main';
 // import Sidebar from './Sidebar';
@@ -106,8 +107,26 @@ export default function MainLayout() {
   const [provincia, setProvincia] = useState('');
   const [materia, setMateria] = useState('');
   const [inputValue, setInputValue] = useState('');
-  const [list, setList] = useState(abogadosList);
+  const [abogadosList, setAbogadosList] = useState([]);
+  // const [list, setList] = useState(abogadosList);
+  const [list, setList] = useState([]);
   const [resultFound, setResultFound] = useState(false)
+  const [abogadoCard, setAbogadoCard] = useState('')
+
+  useEffect(() => {
+    const getAbogados = async () => {
+      return await httpManager.retrieveUsers()
+    }    
+    getAbogados()
+    .then(response => {
+      if(response['data']['responseCode'] === 200)
+        setList(response['data']['responseData'])
+        setAbogadosList(response['data']['responseData'])
+        console.log(response['data']['responseData'])
+      // setValues(response['data']['responseData'])
+     })
+
+  }, [])
 
   const handleInputClearClick = ()=> {
     setInputValue('')
@@ -130,7 +149,7 @@ export default function MainLayout() {
     }
 
     if(materia) {
-      updatedList = updatedList.filter(item => item.especialidad.includes(materia))
+      updatedList = updatedList.filter(item => item.subjects.includes(materia))
     }
 
     setList(updatedList)
@@ -140,10 +159,8 @@ export default function MainLayout() {
 
 
   useEffect(() => {
-
     applyFilters()
-
-  },[provincia, materia])
+  },[provincia, materia, abogadosList])
 
   return (
     <ThemeProvider theme={theme}>
@@ -178,12 +195,10 @@ export default function MainLayout() {
           handleMateriaClearClick={handleMateriaClearClick}
         />
         </Grid>
-         </Box>
-        
+         </Box>  
         <Grid item xs={12} lg={12}>
-          {resultFound ? <AbogadoCardList details = {list}/> : <EmptyView/>}
+          {resultFound ? <AbogadoCardList abogadoCard={abogadoCard} setAbogadoCard={setAbogadoCard} setList={setList} details = {list}/> : <EmptyView/>}
         </Grid>
-        
       </Grid>
       </Box>
       {/* <Container >

@@ -13,9 +13,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-const ResponsiveDialog = ( {open, handleClose, abogadoCard} ) => {
-
-   
+const ResponsiveDialog = ( {open, handleClose, handleAbogadoSelection, abogadoCard} ) => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -38,10 +36,10 @@ const ResponsiveDialog = ( {open, handleClose, abogadoCard} ) => {
           </DialogContent>
           <DialogActions>
             <Button autoFocus onClick={handleClose}>
-              Cerrar
+              Cerrar y buscar
             </Button>
-            <Button onClick={handleClose} autoFocus>
-              Otra opcion O sin opciones?
+            <Button onClick={() => handleAbogadoSelection()} autoFocus>
+              Seleccionar Abogado
             </Button>
           </DialogActions>
         </Dialog>
@@ -55,23 +53,25 @@ AbogadoCardList.propTypes = {
 };
 
 
-export default function AbogadoCardList({ details, ...other }) {
+export default function AbogadoCardList({ abogadoCard, setAbogadoCard, setList, details }) {
 
     const [open, setOpen] = useState(false);
-    const [abogadoCard, setAbogadoCard] = useState('')
-     
+
       const handleClose = () => {
         setOpen(false);
       };
 
+      const handleAbogadoSelection = () => {
+        setOpen(false);
+        setList([abogadoCard])
+      }
 
-   
     return (
         // <Grid container spacing={3} direction="column" alignItems="center" justifyContent="center" {...other}>
         <Grid container spacing={2} alignItems="center" justifyContent="center">
-            {open && <ResponsiveDialog open={open} handleClose={handleClose} abogadoCard={abogadoCard}/>}
+            {open && <ResponsiveDialog open={open} handleClose={handleClose} handleAbogadoSelection={handleAbogadoSelection} abogadoCard={abogadoCard}/>}
         {details.map((product) => (
-            <Grid key={product.id} item xs={12} sm={12} md={7}>
+            <Grid key={product._id} item xs={12} sm={12} md={7}>
             <AbogadoCard details={product} setOpen={setOpen} setAbogadoCard={setAbogadoCard}/>
             </Grid>
         ))}

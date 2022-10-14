@@ -58,7 +58,7 @@ export default function Router() {
       children: [
         { path: 'account', element: <Account /> },
         // { path: 'user', element: <User /> },
-        { path: 'products', element: <Products /> },
+        { path: 'clientes', element: <Products /> },
         // { path: 'blog', element: <Blog /> },
       ],
     },
