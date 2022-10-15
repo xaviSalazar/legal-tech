@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // form
 import { useForm } from 'react-hook-form';
@@ -7,6 +7,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { Link, Stack, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+
 // components
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hook-form';
@@ -14,17 +17,27 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { httpManager } from '../../../managers/httpManager';
-
+// redux
+import { useDispatch, useSelector } from 'react-redux';
+import { doLogin } from '../../../redux/login/loginAction';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const {isLoading, isAuth, error, userType} = useSelector(state => state.login)
   const [showPassword, setShowPassword] = useState(false);
   const [formValues, setFormValues] = useState({ 
                                                 email: '',
                                                 password: '',
                                                 userMod: ''})
+  useEffect(() => {
+    if(userType === "Abogado") {
+      navigate('/abogado-page')
+    } else if(userType === "Cliente"){
+      navigate('/cliente-page')
+    }
+  }, [isAuth])
 
   const handleChangeSelect = (event) => {
        setFormValues({...formValues, ['userMod']:event.target.value})
@@ -56,28 +69,29 @@ export default function LoginForm() {
     event.preventDefault();
     // navigate('/dashboard', { replace: true });
     // console.log(formValues)
-    const contactBackend = await httpManager.loginUser({
-                                              email: formValues.email, 
-                                              userMod: formValues.userMod, 
-                                              password: formValues.password })
+  //   const contactBackend = await httpManager.loginUser({
+  //                                             email: formValues.email, 
+  //                                             userMod: formValues.userMod, 
+  //                                             password: formValues.password })
 
-    if(contactBackend['data']['responseCode'] === 200) {
-      // succesfully registered go to login page
-      const token = contactBackend['data']['responseData']['token']
-      localStorage.setItem('customerToken', token)
-      if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Abogado") {
-        console.log(`GO TO ABOGADO PAGE`)
-        navigate('/abogado-page')
-      } else if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Cliente") {
-        console.log(`GO TO CLIENTE PAGE`)
-        navigate('/cliente-page')
-      }
+  //   if(contactBackend['data']['responseCode'] === 200) {
+  //     // succesfully registered go to login page
+  //     const token = contactBackend['data']['responseData']['token']
+  //     localStorage.setItem('customerToken', token)
+  //     if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Abogado") {
+  //       console.log(`GO TO ABOGADO PAGE`)
+  //       navigate('/abogado-page')
+  //     } else if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Cliente") {
+  //       console.log(`GO TO CLIENTE PAGE`)
+  //       navigate('/cliente-page')
+  //     }
 
-  } else if(contactBackend['data']['responseCode'] === 400){
+  // } else if(contactBackend['data']['responseCode'] === 400){
 
-    alert(contactBackend['data']['message'])
-    // user is not logged in 
-  }
+  //   alert(contactBackend['data']['message'])
+  //   // user is not logged in 
+  // }
+  dispatch(doLogin( {email: formValues.email, userMod: formValues.userMod, password: formValues.password }))
 
   };
 
@@ -90,7 +104,9 @@ export default function LoginForm() {
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
+      
       <Stack spacing={3}>
+        {error && <Alert severity="error">{error}</Alert>}
         <RHFTextField required name="email" label="Correo Electronico" value = {formValues["email"]} onChange = {handleChange} />
 
         <InputLabel id="demo-simple-select-label">Elige si eres cliente o abogado</InputLabel>
@@ -132,9 +148,11 @@ export default function LoginForm() {
         </Link>
       </Stack>
 
+      { isLoading ?<CircularProgress/> : (
       <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
         Login
       </LoadingButton>
+      )}
     </FormProvider>
   );
 }
