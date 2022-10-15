@@ -24,13 +24,20 @@ const loginSlice = createSlice({
         loginFail:(state, action) => {
             state.isLoading = false
             state.error = action.payload
-
+            state.userType = ''
+            state.isAuth = false
         },
+        logoutErase: (state) => {
+            state.isLoading= false
+            state.isAuth= false
+            state.userType= ''
+            state.error= ''
+        }
     }
 });
 
 const { reducer, actions } = loginSlice
 
-export const{loginPending, loginSuccess, loginFail} = actions
+export const{loginPending, loginSuccess, loginFail, logoutErase} = actions
 
 export default reducer

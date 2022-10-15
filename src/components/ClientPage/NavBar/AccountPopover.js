@@ -7,11 +7,11 @@ import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton } from '@
 import MenuPopover from '../../MenuPopover';
 // mocks_
 // import account from '../../../_mock/account';
-import { httpManager } from '../../../managers/httpManager';
 
 import { useNavigate } from 'react-router-dom';
 // redux 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { doLogout } from '../../../redux/login/loginAction';
 
 
 // ----------------------------------------------------------------------
@@ -43,7 +43,7 @@ export default function AccountPopover() {
   const [open, setOpen] = useState(null);
   const navigate = useNavigate();
   const {account} = useSelector(state => state.user)
-
+  const dispatch = useDispatch();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -54,16 +54,8 @@ export default function AccountPopover() {
   };
 
   const handleLogout = async () => {
-
-    const token = localStorage.getItem('customerToken');
-    const config = {
-        headers: {Authorization: `Bearer ${token}`}
-    }
-    const loggingout = await httpManager.logoutUser(config)
-
-    if(loggingout['data']['responseCode'] === 200) {
-      navigate('/') 
-    }
+    navigate('/') 
+    dispatch(doLogout())
   }
 
   return (

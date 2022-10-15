@@ -25,19 +25,19 @@ import { doLogin } from '../../../redux/login/loginAction';
 export default function LoginForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {isLoading, isAuth, error, userType} = useSelector(state => state.login)
+  const {isLoading, error} = useSelector(state => state.login)
   const [showPassword, setShowPassword] = useState(false);
   const [formValues, setFormValues] = useState({ 
                                                 email: '',
                                                 password: '',
                                                 userMod: ''})
-  useEffect(() => {
-    if(userType === "Abogado") {
-      navigate('/abogado-page')
-    } else if(userType === "Cliente"){
-      navigate('/cliente-page')
-    }
-  }, [isAuth])
+  // useEffect(() => {
+  //   if(userType === "Abogado") {
+  //     navigate('/abogado-page')
+  //   } else if(userType === "Cliente"){
+  //     navigate('/cliente-page')
+  //   }
+  // }, [isAuth])
 
   const handleChangeSelect = (event) => {
        setFormValues({...formValues, ['userMod']:event.target.value})
@@ -67,30 +67,7 @@ export default function LoginForm() {
   const onSubmit = async (event) => {
 
     event.preventDefault();
-    // navigate('/dashboard', { replace: true });
-    // console.log(formValues)
-  //   const contactBackend = await httpManager.loginUser({
-  //                                             email: formValues.email, 
-  //                                             userMod: formValues.userMod, 
-  //                                             password: formValues.password })
 
-  //   if(contactBackend['data']['responseCode'] === 200) {
-  //     // succesfully registered go to login page
-  //     const token = contactBackend['data']['responseData']['token']
-  //     localStorage.setItem('customerToken', token)
-  //     if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Abogado") {
-  //       console.log(`GO TO ABOGADO PAGE`)
-  //       navigate('/abogado-page')
-  //     } else if(contactBackend['data']['responseData']['ClienteExist']['userMod'] === "Cliente") {
-  //       console.log(`GO TO CLIENTE PAGE`)
-  //       navigate('/cliente-page')
-  //     }
-
-  // } else if(contactBackend['data']['responseCode'] === 400){
-
-  //   alert(contactBackend['data']['message'])
-  //   // user is not logged in 
-  // }
   dispatch(doLogin( {email: formValues.email, userMod: formValues.userMod, password: formValues.password }))
 
   };

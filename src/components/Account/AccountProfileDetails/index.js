@@ -17,7 +17,6 @@ import { provinciasList } from '../../../constants';
 import HelperRegisterForm from '../../../sections/auth/register/HelperRegisterForm';
 // redux 
 import { useSelector } from 'react-redux';
-import Account from '../../../pages/Account';
 
 
 export const AccountProfileDetails = (props) => {

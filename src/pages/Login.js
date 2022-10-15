@@ -11,8 +11,10 @@ import Logo from '../components/Logo';
 // sections
 import { LoginForm } from '../sections/auth/login';
 import AuthSocial from '../sections/auth/AuthSocial';
-import { httpManager } from '../managers/httpManager';
 import { useNavigate } from 'react-router-dom';
+// redux
+import { useDispatch, useSelector } from 'react-redux';
+import { autoLogin } from '../redux/login/loginAction';
 
 // ----------------------------------------------------------------------
 const RootStyle = styled('div')(({ theme }) => ({
@@ -62,33 +64,20 @@ export default function Login() {
   const smUp = useResponsive('up', 'sm');
   const mdUp = useResponsive('up', 'md');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { userType} = useSelector(state => state.login)
 
   useEffect(() => {
+    dispatch(autoLogin())
+  },[dispatch])
 
-    console.log(`login useeffect`)
-    const token = localStorage.getItem('customerToken')
-    console.log(token)
-    const config = {
-          headers: {Authorization: `Bearer ${token}`}
+  useEffect(() => {
+    if(userType === "Abogado") {
+      navigate('/abogado-page')
+    } else if(userType === "Cliente"){
+      navigate('/cliente-page')
     }
-
-    const authenticate = async () => {
-      return await httpManager.customerAuth(config)
-    }
-    
-    authenticate()
-    .then(response => {if(response['data']['responseCode'] === 200)
-                                    {
-                                    if(response['data']['responseData']['userMod'] === "Abogado") {
-                                      console.log(`GO TO ABOGADO PAGE`)
-                                      navigate('/abogado-page')
-                                    } else if(response['data']['responseData']['userMod'] === "Cliente") {
-                                      console.log(`GO TO CLIENTE PAGE`)
-                                      navigate('/cliente-page')
-                                    }
-                                    }
-                                  })
-  }, [])
+  }, [userType])
 
   return (
     <Page title="Login">

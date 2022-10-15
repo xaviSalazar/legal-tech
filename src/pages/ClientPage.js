@@ -1,11 +1,9 @@
-import { Link as RouterLink } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 // @mui
 import { Outlet } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Button, Typography, Container, Box } from '@mui/material';
+
 // components
-import Page from '../components/Page';
 import ClientNavbar from '../components/ClientPage/NavBar'
 import ClientSidebar from '../components/ClientPage/SiderBar'
 // redux
@@ -44,7 +42,7 @@ export default function ClientPage() {
 
   useEffect(() => {
     dispatch(getUserProfile())
-  }, [])
+  }, [dispatch])
   
   return (
 
