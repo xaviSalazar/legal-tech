@@ -6,13 +6,19 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { HelmetProvider } from 'react-helmet-async';
 import { HashRouter } from 'react-router-dom'
+//---redux imports----//
+import { Provider } from 'react-redux';
+import store from './redux/store'
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <HelmetProvider>
     <HashRouter>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
     </HashRouter>
     </HelmetProvider>
   </React.StrictMode>

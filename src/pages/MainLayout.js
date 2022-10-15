@@ -3,20 +3,24 @@ import { useState, useEffect } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 // import Container from '@mui/material/Container';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import TwitterIcon from '@mui/icons-material/Twitter';
+// import GitHubIcon from '@mui/icons-material/GitHub';
+// import FacebookIcon from '@mui/icons-material/Facebook';
+// import TwitterIcon from '@mui/icons-material/Twitter';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Header from './Header';
 import MainFeaturedPost from './MainFeaturedPost';
 import SearchBar from '../components/SearchBar';
-import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
+// import Paper from '@mui/material/Paper';
+// import { styled } from '@mui/material/styles';
 import AbogadoCardList from '../components/AbogadoCardList'
 // import { abogadosList } from '../constants';
 import EmptyView from '../components/EmptyView'
-import { httpManager } from '../managers/httpManager';
+// import { httpManager } from '../managers/httpManager';
+/* REDUX */
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllAbogados } from '../redux/mainlayout/mainlayoutAction';
+
 // import FeaturedPost from './FeaturedPost';
 // import Main from './Main';
 // import Sidebar from './Sidebar';
@@ -47,86 +51,93 @@ const mainFeaturedPost = {
   linkText: 'Continue reading…',
 };
 
-const featuredPosts = [
-  {
-    title: 'Featured post',
-    date: 'Nov 12',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random',
-    imageLabel: 'Image Text',
-  },
-  {
-    title: 'Post title',
-    date: 'Nov 11',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random',
-    imageLabel: 'Image Text',
-  },
-];
+// const featuredPosts = [
+//   {
+//     title: 'Featured post',
+//     date: 'Nov 12',
+//     description:
+//       'This is a wider card with supporting text below as a natural lead-in to additional content.',
+//     image: 'https://source.unsplash.com/random',
+//     imageLabel: 'Image Text',
+//   },
+//   {
+//     title: 'Post title',
+//     date: 'Nov 11',
+//     description:
+//       'This is a wider card with supporting text below as a natural lead-in to additional content.',
+//     image: 'https://source.unsplash.com/random',
+//     imageLabel: 'Image Text',
+//   },
+// ];
 
 // const posts = [post1, post2, post3];
 
-const sidebar = {
-  title: 'About',
-  description:
-    'Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.',
-  archives: [
-    { title: 'March 2020', url: '#' },
-    { title: 'February 2020', url: '#' },
-    { title: 'January 2020', url: '#' },
-    { title: 'November 1999', url: '#' },
-    { title: 'October 1999', url: '#' },
-    { title: 'September 1999', url: '#' },
-    { title: 'August 1999', url: '#' },
-    { title: 'July 1999', url: '#' },
-    { title: 'June 1999', url: '#' },
-    { title: 'May 1999', url: '#' },
-    { title: 'April 1999', url: '#' },
-  ],
-  social: [
-    { name: 'GitHub', icon: GitHubIcon },
-    { name: 'Twitter', icon: TwitterIcon },
-    { name: 'Facebook', icon: FacebookIcon },
-  ],
-};
+// const sidebar = {
+//   title: 'About',
+//   description:
+//     'Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.',
+//   archives: [
+//     { title: 'March 2020', url: '#' },
+//     { title: 'February 2020', url: '#' },
+//     { title: 'January 2020', url: '#' },
+//     { title: 'November 1999', url: '#' },
+//     { title: 'October 1999', url: '#' },
+//     { title: 'September 1999', url: '#' },
+//     { title: 'August 1999', url: '#' },
+//     { title: 'July 1999', url: '#' },
+//     { title: 'June 1999', url: '#' },
+//     { title: 'May 1999', url: '#' },
+//     { title: 'April 1999', url: '#' },
+//   ],
+//   social: [
+//     { name: 'GitHub', icon: GitHubIcon },
+//     { name: 'Twitter', icon: TwitterIcon },
+//     { name: 'Facebook', icon: FacebookIcon },
+//   ],
+// };
 
 const theme = createTheme();
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-}));
+// const Item = styled(Paper)(({ theme }) => ({
+//   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+//   ...theme.typography.body2,
+//   padding: theme.spacing(1),
+//   textAlign: 'center',
+//   color: theme.palette.text.secondary,
+// }));
 
 export default function MainLayout() {
+  // redux 
+  const dispatch = useDispatch()
+  const {abogadosList, isLoading, error} = useSelector((state) => state.abogados)
   // Variables to set the search values
   const [provincia, setProvincia] = useState('');
   const [materia, setMateria] = useState('');
   const [inputValue, setInputValue] = useState('');
-  const [abogadosList, setAbogadosList] = useState([]);
+  // const [abogadosList, setAbogadosList] = useState([]);
   // const [list, setList] = useState(abogadosList);
   const [list, setList] = useState([]);
   const [resultFound, setResultFound] = useState(false)
   const [abogadoCard, setAbogadoCard] = useState('')
 
-  useEffect(() => {
-    const getAbogados = async () => {
-      return await httpManager.retrieveUsers()
-    }    
-    getAbogados()
-    .then(response => {
-      if(response['data']['responseCode'] === 200)
-        setList(response['data']['responseData'])
-        setAbogadosList(response['data']['responseData'])
-        console.log(response['data']['responseData'])
-      // setValues(response['data']['responseData'])
-     })
+  // useEffect(() => {
+  //   const getAbogados = async () => {
+  //     return await httpManager.retrieveUsers()
+  //   }    
+  //   getAbogados()
+  //   .then(response => {
+  //     if(response['data']['responseCode'] === 200)
+  //       setList(response['data']['responseData'])
+  //       setAbogadosList(response['data']['responseData'])
+  //       //console.log(response['data']['responseData'])
+  //     // setValues(response['data']['responseData'])
+  //    })
 
-  }, [])
+  // }, [])
+
+  useEffect(() => {
+    dispatch(fetchAllAbogados());
+  },[dispatch])
 
   const handleInputClearClick = ()=> {
     setInputValue('')
