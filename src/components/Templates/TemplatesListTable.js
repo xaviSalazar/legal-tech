@@ -12,6 +12,9 @@ import PizZipUtils from 'pizzip/utils/index.js';
 // import { saveAs } from 'file-saver';
 // httpManager
 import { httpManager } from '../../managers/httpManager';
+// redux 
+import { useSelector } from 'react-redux';
+
 //-----------------------product template viewer
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 // import { Container, Typography } from '@mui/material';
@@ -195,10 +198,9 @@ const DocumentViewer = ({docs}) => {
 }
 
 
-export const TemplatesListTable = ({userDetails, ...rest }) => {
+export const TemplatesListTable = ({...rest }) => {
 
-  console.log(userDetails)
-
+  const {account} = useSelector(state => state.user)
   const [list, setList] = useState([]);
   const [ticketNumber, setTicketNumber] = useState('')
   const [open, setOpen] = useState(false);
@@ -283,10 +285,10 @@ export const TemplatesListTable = ({userDetails, ...rest }) => {
                        phoneNumber:list[0]['phoneNumber'],
                        userId: list[0]['_id'] }
 
-      const Cliente = {name:userDetails['name'], 
-                       email:userDetails['email'], 
-                       phoneNumber:userDetails['phoneNumber'],
-                       userId: userDetails['_id'] }
+      const Cliente = {name:account['name'], 
+                       email:account['email'], 
+                       phoneNumber:account['phoneNumber'],
+                       userId: account['_id'] }
 
       const ticketTransaction = {
         ticketId: ticketNumber,
@@ -295,6 +297,7 @@ export const TemplatesListTable = ({userDetails, ...rest }) => {
       }
 
       const data = { Abogado: Abogado, Cliente: Cliente, ticketTransaction: ticketTransaction}
+      console.log(data)
       await httpManager.createTicket(data);
     }
 

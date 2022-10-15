@@ -15,43 +15,24 @@ import FormControl from '@mui/material/FormControl';
 import { registerObject } from '../../../constants';
 import { provinciasList } from '../../../constants';
 import HelperRegisterForm from '../../../sections/auth/register/HelperRegisterForm';
+// redux 
+import { useSelector } from 'react-redux';
+import Account from '../../../pages/Account';
+
 
 export const AccountProfileDetails = (props) => {
 
+  const {account} = useSelector(state => state.user)
   const [values, setValues] = useState(registerObject)
   const [materia, setMateria] = useState([]);
-  const [checked, setChecked] = useState(false)
-
-  console.log(values)
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    console.log(`Account details page useEffect`)
-    const token = localStorage.getItem('customerToken')
-    const config = {
-          headers: {Authorization: `Bearer ${token}`}
-    }
-    const authenticate = async () => {
-      return await httpManager.customerAuth(config)
-    }
-    
-    authenticate()
-    .then(response => {
-      if(response['data']['responseCode'] === 200) 
-      {
-       const newVal = response['data']['responseData']
-       delete newVal.isVerified
-       delete newVal.userMode
-       delete newVal.birthDate
-       delete newVal.emailToken
-       delete newVal.image_url
-      setValues(response['data']['responseData'])
-      setChecked(response['data']['responseData']['remoteWork'])
-      setMateria(response['data']['responseData']['subjects'])
-      console.log(response['data']['responseData'])
-      }
-     })
-  }, [])
-
+      setValues(account)
+      setChecked(account['remoteWork'])
+      setMateria(account['subjects'])
+  }, [account])
+  
   const handlePhoneChange = (newPhoneNumber) => {
     const firstFilter = newPhoneNumber.replace('+','')
     const newoutput = firstFilter.replace(/ /g , '')

@@ -14,6 +14,9 @@ import Scrollbar from '../../Scrollbar';
 import NavSection from '../../NavSection';
 //
 import navConfig from './NavConfig';
+// redux 
+import { useSelector } from 'react-redux';
+
 
 // ----------------------------------------------------------------------
 
@@ -41,10 +44,11 @@ TalentSidebar.propTypes = {
   onCloseSidebar: PropTypes.func,
 };
 
-export default function TalentSidebar({ isOpenSidebar, onCloseSidebar, account }) {
+export default function TalentSidebar({ isOpenSidebar, onCloseSidebar}) {
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
+  const {account} = useSelector(state => state.user)
 
   useEffect(() => {
     if (isOpenSidebar) {

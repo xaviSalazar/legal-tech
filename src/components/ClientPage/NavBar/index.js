@@ -39,7 +39,7 @@ TalentNavbar.propTypes = {
   onOpenSidebar: PropTypes.func,
 };
 
-export default function TalentNavbar({ onOpenSidebar, account }) {
+export default function TalentNavbar({ onOpenSidebar }) {
   return (
     <RootStyle>
       <ToolbarStyle>
@@ -55,7 +55,7 @@ export default function TalentNavbar({ onOpenSidebar, account }) {
         {/* <AccessibilityNewOutlinedIcon/> */}
           {/* <LanguagePopover /> */}
           <NotificationsPopover />
-          <AccountPopover account={account}/>
+          <AccountPopover />
         </Stack>
       </ToolbarStyle>
     </RootStyle>

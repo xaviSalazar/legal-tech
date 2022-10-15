@@ -11,29 +11,16 @@ import {
 import { useEffect, useState, useRef } from 'react';
 import { httpManager } from '../../../managers/httpManager';
 import CardMedia from '@mui/material/CardMedia';
+// redux 
+import { useSelector } from 'react-redux';
+  
   
 export const AccountProfile = (props) => {
 
     const hiddenFileInput = useRef(null);
-    const [values, setValues] = useState('')
+    const {account} = useSelector(state => state.user)
     const [image, setImage] = useState()
     const [preview, setPreview] = useState();
-
-    useEffect(() => {
-      console.log(`Account details page useEffect`)
-      const token = localStorage.getItem('customerToken')
-      const config = {
-            headers: {Authorization: `Bearer ${token}`}
-      }
-      const authenticate = async () => {
-        return await httpManager.customerAuth(config)
-      }    
-      authenticate()
-      .then(response => {
-        if(response['data']['responseCode'] === 200)
-        setValues(response['data']['responseData'])
-       })
-    }, [])
 
     useEffect(() => {
       if(image) {
@@ -66,8 +53,8 @@ export const AccountProfile = (props) => {
       const {status} = await httpManager.uploadFileFromBrowser(data.url, formData)
       console.log(status)
       if(status === 204) { 
-        await httpManager.updateProfilePicture({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": values._id})
-        resolve({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": values._id}) 
+        await httpManager.updateProfilePicture({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": account._id})
+        resolve({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": account._id}) 
       } else {reject("error loading to S3")} 
   });
 
@@ -108,7 +95,7 @@ export const AccountProfile = (props) => {
           />) : (<CardMedia
           component="img"
           height="200"
-          image={values.image_url}
+          image={account.image_url}
           alt="Profile picture"
           />)}
           <Typography
@@ -116,13 +103,13 @@ export const AccountProfile = (props) => {
             gutterBottom
             variant="h5"
           >
-            {values.name}
+            {account.name}
           </Typography>
           <Typography
             color="textSecondary"
             variant="body2"
           >
-            {`${values.city}, ${values.province}`}
+            {`${account.city}, ${account.province}`}
           </Typography>
           {/* <Typography
             color="textSecondary"

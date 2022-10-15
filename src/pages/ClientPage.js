@@ -7,8 +7,10 @@ import { Button, Typography, Container, Box } from '@mui/material';
 // components
 import Page from '../components/Page';
 import ClientNavbar from '../components/ClientPage/NavBar'
-import ClientSidebar from '../components/ClientPage/SiderBar';
-import { httpManager } from '../managers/httpManager';
+import ClientSidebar from '../components/ClientPage/SiderBar'
+// redux
+import { useDispatch } from 'react-redux';
+import { getUserProfile } from '../redux/authenticate/userAction';
 
 
 const APP_BAR_MOBILE = 64;
@@ -38,33 +40,17 @@ const MainStyle = styled('div')(({ theme }) => ({
 export default function ClientPage() {
 
   const [open, setOpen] = useState(false);
-  const [account, setAccount] = useState("")
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(`Client page useEffect`)
-    const token = localStorage.getItem('customerToken')
-    console.log(token)
-    const config = {
-          headers: {Authorization: `Bearer ${token}`}
-    }
-    const authenticate = async () => {
-      return await httpManager.customerAuth(config)
-    }
-    authenticate()
-    .then(response => {if(response['data']['responseCode'] === 200)
-    console.log(`authenticated`)
-    setAccount(response['data']['responseData'])
-    console.log(response['data']['responseData'])
-    })
+    dispatch(getUserProfile())
   }, [])
-
-
   
   return (
 
     <RootStyle>
-      <ClientNavbar onOpenSidebar={() => setOpen(true)} account={account}/>
-      <ClientSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} account = {account}/>
+      <ClientNavbar onOpenSidebar={() => setOpen(true)}/>
+      <ClientSidebar isOpenSidebar={open} onCloseSidebar={() => setOpen(false)}/>
       <MainStyle>
         <Outlet />
       </MainStyle>

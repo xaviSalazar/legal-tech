@@ -10,6 +10,9 @@ import MenuPopover from '../../MenuPopover';
 import { httpManager } from '../../../managers/httpManager';
 
 import { useNavigate } from 'react-router-dom';
+// redux 
+import { useSelector } from 'react-redux';
+  
 
 // ----------------------------------------------------------------------
 
@@ -34,9 +37,9 @@ const MENU_OPTIONS = [
 
 // ----------------------------------------------------------------------
 
-export default function AccountPopover({account}) {
+export default function AccountPopover() {
   const anchorRef = useRef(null);
-
+  const {account} = useSelector(state => state.user)
   const [open, setOpen] = useState(null);
   const navigate = useNavigate();
 
