@@ -15,6 +15,7 @@ import TalentPage from './pages/TalentPage'
 import ClientPage from './pages/ClientPage';
 import Account from './pages/Account';
 import Templates from './pages/Templates';
+import Propuestas from './pages/Propuestas'
 // import DashboardApp from './pages/DashboardApp';
 
 
@@ -58,7 +59,7 @@ export default function Router() {
       children: [
         { path: 'account', element: <Account /> },
         // { path: 'user', element: <User /> },
-        { path: 'clientes', element: <Products /> },
+        { path: 'propuestas', element: <Propuestas /> },
         // { path: 'blog', element: <Blog /> },
       ],
     },

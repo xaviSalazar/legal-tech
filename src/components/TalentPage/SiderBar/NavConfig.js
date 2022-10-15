@@ -17,8 +17,8 @@ const navConfig = [
   //   icon: getIcon('eva:people-fill'),
   // },
   {
-    title: 'product',
-    path: '/abogado-page/products',
+    title: 'propuestas',
+    path: '/abogado-page/propuestas',
     icon: getIcon('eva:briefcase-fill'),
   },
   // {

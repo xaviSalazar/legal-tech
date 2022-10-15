@@ -52,10 +52,16 @@ const retrieveUsers = async() => {
     return await axios.get(`${API_BASE_URL}/retrieve-abogados`)
 }
 
+/* CRUD for tickets */
+// create ticket
 const createTicket = async(data) => {
     return await axios.post(`${API_BASE_URL}/create-ticket`, data)
 }
 
+// retrieve ticket user
+const fetchAllTickets = async(id) => {
+    return await axios.get(`${API_BASE_URL}/fetch-all-tickets?userId=${id}`)
+}
 export const httpManager = {
     facebookLogin,
     registerCustomer,
@@ -69,5 +75,6 @@ export const httpManager = {
     updateProfilePicture,
     updateAbogadoProfile,
     retrieveUsers,
-    createTicket
+    createTicket,
+    fetchAllTickets
 };

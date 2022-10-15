@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import abogadosReducer from './mainlayout/mainlayoutSlice'
 import loginReducer from './login/loginSlice'
 import userReducer  from './authenticate/userSlice'
+import ticketsReducer from './tickets/ticketSlice'
 
 const store = configureStore({
     
@@ -9,7 +10,9 @@ const store = configureStore({
         // list of reducers
         abogados: abogadosReducer,
         login: loginReducer,
-        user: userReducer
+        user: userReducer,
+        tickets: ticketsReducer
+
     }
 });
 

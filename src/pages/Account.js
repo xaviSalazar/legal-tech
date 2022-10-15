@@ -1,9 +1,9 @@
 // import Head from 'next/head';
 import { Box, Container, Grid, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+
 import { AccountProfile } from '../components/Account/AccountProfile';
 import { AccountProfileDetails } from '../components/Account/AccountProfileDetails';
-import { httpManager } from '../managers/httpManager';
+
 
 
 const Account = () => {
