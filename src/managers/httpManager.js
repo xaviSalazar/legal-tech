@@ -1,7 +1,7 @@
 import axios from "axios"
 
-//const API_BASE_URL = "http://localhost:3001";
-const API_BASE_URL = "https://legaltech-example.herokuapp.com"
+const API_BASE_URL = "http://localhost:3001";
+//const API_BASE_URL = "https://legaltech-example.herokuapp.com"
 
 // do functions to register users
 const facebookLogin = async (data) => {
@@ -62,6 +62,12 @@ const createTicket = async(data) => {
 const fetchAllTickets = async(id) => {
     return await axios.get(`${API_BASE_URL}/fetch-all-tickets?userId=${id}`)
 }
+
+// update ticket user
+const modifyTicketStatus = async(data) => {
+    return await axios.post(`${API_BASE_URL}/modify-ticket-status`, data)
+}
+
 export const httpManager = {
     facebookLogin,
     registerCustomer,
@@ -76,5 +82,6 @@ export const httpManager = {
     updateAbogadoProfile,
     retrieveUsers,
     createTicket,
-    fetchAllTickets
+    fetchAllTickets,
+    modifyTicketStatus
 };

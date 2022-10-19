@@ -26,6 +26,10 @@ export default function EcommerceShop() {
     dispatch(fetchAllTickets(account['_id']))
   }, [account])
 
+  useEffect(() => {
+
+  }, [ticketsList])
+
   const handleOpenFilter = () => {
     setOpenFilter(true);
   };

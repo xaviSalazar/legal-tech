@@ -1,4 +1,4 @@
-import {fetchTicketsFail, fetchTicketsSuccess, fetchTicketsLoading} from './ticketSlice'
+import {fetchTicketsFail, fetchTicketsSuccess, fetchTicketsLoading, modifyTicketStatus} from './ticketSlice'
 import { httpManager } from '../../managers/httpManager';
 
 export const fetchAllTickets = (id) => async (dispatch) => {
@@ -8,8 +8,7 @@ export const fetchAllTickets = (id) => async (dispatch) => {
     try {
         // fetch data from api 
         const result = await httpManager.fetchAllTickets(id)
-        console.log(result)
-        
+        console.log(result)  
         dispatch(fetchTicketsSuccess(result.data.responseData))
 
 
@@ -17,4 +16,19 @@ export const fetchAllTickets = (id) => async (dispatch) => {
         dispatch(fetchTicketsFail(error.message));
     }
 
+}
+
+export const modifyTicket = (updateTicket) => async(dispatch) => {
+    try {
+        const result = await httpManager.modifyTicketStatus(updateTicket)
+            if(result['data']['responseCode'] === 200) {
+            console.log(result)
+            // succesfully registered go to login page
+            // const newTickets = 
+            dispatch(modifyTicketStatus(updateTicket))
+            } 
+        } catch (error) {
+            dispatch(fetchTicketsFail(error.message));
+        }
+    
 }
