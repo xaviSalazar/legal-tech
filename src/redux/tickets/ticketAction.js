@@ -8,7 +8,7 @@ export const fetchAllTickets = (id) => async (dispatch) => {
     try {
         // fetch data from api 
         const result = await httpManager.fetchAllTickets(id)
-        console.log(result)  
+        // console.log(result)  
         dispatch(fetchTicketsSuccess(result.data.responseData))
 
 

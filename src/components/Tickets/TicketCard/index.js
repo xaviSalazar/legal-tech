@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
 // material
 import { Box, Card, Link, Typography, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -16,6 +17,7 @@ import CardHeader from '@mui/material/CardHeader';
 import { modifyTicket } from '../../../redux/tickets/ticketAction';
 // redux 
 import {  useDispatch } from 'react-redux';
+import { httpManager } from '../../../managers/httpManager';
 
 
 // ----------------------------------------------------------------------
@@ -66,19 +68,129 @@ TicketCard.propTypes = {
 //     "conversation": [],
 //     "__v": 0
 // },
+const actionButtons = (handleClick, status, handleChange, hiddenFileInput, handleUpload, handleUploadDocument, file) => {
+
+  if(status === "Acceptado") {
+    return (
+      <>
+      <Typography variant="subtitle2" noWrap>
+      Procese la solicitud.
+      </Typography> 
+      <Typography variant="subtitle2" noWrap>
+      Paso 1. Descargue el documento
+      </Typography> 
+      <Typography variant="subtitle2" noWrap>
+      Paso 2. Firme electronicamente
+      </Typography> 
+      <Typography variant="subtitle2" noWrap>
+      Paso 3. Genere un PDF 
+      </Typography> 
+      <Typography variant="subtitle2" noWrap>
+      Paso 4. subir el archivo y enviar
+      </Typography> 
+      {file &&  <Typography variant="subtitle2" noWrap>
+      {file.name}
+      </Typography> 
+      }
+      {file && <Button
+          color="primary"
+          variant="contained"
+          onClick={handleUploadDocument}
+        > 
+        Enviar a cliente
+        </Button>}
+      <input 
+          type="file" 
+          ref={hiddenFileInput}
+          style={{display:'none'}}
+          accept="application/pdf"
+          onChange={handleChange}     
+      />
+      <Button
+          color="primary"
+          variant="contained"
+          onClick={handleUpload}
+        > 
+        Subir archivo
+        </Button>
+  </>
+    )
+  }
+  else if(status === "Rechazado") {
+    return (
+      <Typography variant="subtitle2" noWrap>
+          ****Solicitud rechazada****
+      </Typography>)
+  }
+  else if(status === "Esperando respuesta") {
+  return (
+  <>
+  <Button name="Acceptado" onClick={handleClick} variant="contained">Aceptar</Button>
+  <Button name="Rechazado" onClick={handleClick} variant="contained">Rechazar</Button>
+  </>
+  )
+} else {
+  return (<></>)
+}
+}
 
 export default function TicketCard({ ticket }) {
+
   const dispatch = useDispatch()
+  const hiddenFileInput = useRef(null);
+  const [file, setFile] = useState()
   const { ticketUsers, ticketsTransactions } = ticket;
+
+  const handleUploadDocument = async (event) => {
+    const keepName = ticketsTransactions[0]['document'].replace('https://d1d5i0xjsb5dtw.cloudfront.net/','')
+    const promise = new Promise ( async (resolve, reject) => {
+      const {data} = await httpManager.getPresignedUrl(keepName)   
+    const pipe = {
+        bucket: "myawsbucketwhatsapp",
+        ...data.fields,
+        'Content-Type':file.type ,
+        file: file
+    };
+    const formData = new FormData();
+    for (const name in pipe) {
+        formData.append(name, pipe[name]);
+    }
+    const {status} = await httpManager.uploadFileFromBrowser(data.url, formData)
+    console.log(status)
+    if(status === 204) { 
+      // await httpManager.updateProfilePicture({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": account._id})
+      // resolve({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": account._id})
+      resolve({ticketId: ticketsTransactions[0]['ticketId'], status: "ENVIADO"}) 
+    } else {reject("error loading to S3")} 
+});
+
+promise.then((d) => {
+    console.log(d)
+    dispatch(modifyTicket(d))
+  });
+}
 
 const handleClick = async(event) => {
   const {name} = event.target
   const updateTicket = {ticketId: ticketsTransactions[0]['ticketId'], status: name}
-
   dispatch(modifyTicket(updateTicket))
-  // await httpManager.modifyTicketStatus(updateTicket)
-  // console.log(name)
 }
+
+const handleUpload = event => {
+  hiddenFileInput.current.click();
+};
+
+const handleChange = async (event) => {
+  const file = event.target.files[0];
+  setFile(file)
+  console.log(file)
+  // if(file && file.type.substr(0,5) === "image") {
+  //   setImage(file);
+  // } else {
+  //   setImage(null)
+  // }
+};
+
   return (
     <Card>
         <CardHeader 
@@ -129,9 +241,16 @@ const handleClick = async(event) => {
           VER DOCUMENTO
         </Link>
         {/* <Button size="small">VER DOCUMENTO</Button> */}
-        <Stack direction="row" spacing={2} sx={{ p: 1 }}>
-        <Button name="Acceptado" onClick={e => handleClick(e)} variant="contained">Aceptar</Button>
-        <Button name="Rechazado" onClick={e => handleClick(e)} variant="contained">Rechazar</Button>
+        <Stack direction="column" spacing={2} sx={{ p: 1 }}>
+        {actionButtons(e => handleClick(e), 
+                        ticketsTransactions[0]['status'], 
+                        handleChange, 
+                        hiddenFileInput, 
+                        handleUpload,
+                        handleUploadDocument,
+                        file)}
+        {/* <Button name="Acceptado" onClick={e => handleClick(e)} variant="contained">Aceptar</Button>
+        <Button name="Rechazado" onClick={e => handleClick(e)} variant="contained">Rechazar</Button> */}
         </Stack>
       </Stack>
       </CardActions>
