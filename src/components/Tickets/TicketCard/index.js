@@ -134,15 +134,18 @@ const actionButtons = (handleClick, status, handleChange, hiddenFileInput, handl
 }
 }
 
-export default function TicketCard({ ticket }) {
+
+export default function TicketCard({ ticket, ticketUsers}) {
+
+  console.log(ticket)
+  console.log(ticketUsers)
 
   const dispatch = useDispatch()
   const hiddenFileInput = useRef(null);
   const [file, setFile] = useState()
-  const { ticketUsers, ticketsTransactions } = ticket;
 
   const handleUploadDocument = async (event) => {
-    const keepName = ticketsTransactions[0]['document'].replace('https://d1d5i0xjsb5dtw.cloudfront.net/','')
+    const keepName = ticket['document'].replace('https://d1d5i0xjsb5dtw.cloudfront.net/','')
     const promise = new Promise ( async (resolve, reject) => {
       const {data} = await httpManager.getPresignedUrl(keepName)   
     const pipe = {
@@ -160,7 +163,7 @@ export default function TicketCard({ ticket }) {
     if(status === 204) { 
       // await httpManager.updateProfilePicture({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": account._id})
       // resolve({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": account._id})
-      resolve({ticketId: ticketsTransactions[0]['ticketId'], status: "ENVIADO"}) 
+      resolve({ticketId: ticket['ticketId'], status: "ENVIADO"}) 
     } else {reject("error loading to S3")} 
 });
 
@@ -172,7 +175,7 @@ promise.then((d) => {
 
 const handleClick = async(event) => {
   const {name} = event.target
-  const updateTicket = {ticketId: ticketsTransactions[0]['ticketId'], status: name}
+  const updateTicket = {ticketId: ticket['ticketId'], status: name}
   dispatch(modifyTicket(updateTicket))
 }
 
@@ -195,26 +198,26 @@ const handleChange = async (event) => {
     <Card>
         <CardHeader 
             title = {`Cliente: ${ticketUsers[1]['name']}`}
-            subheader = {new Date(ticketsTransactions[0]['createdAt']).toDateString()}
+            subheader = {new Date(ticket['createdAt']).toDateString()}
         />
       <Stack spacing={2} sx={{ p: 3 }}>
 
           <Typography variant="subtitle2" noWrap>
-            {ticketsTransactions[0]['ticketId']}
+            {ticket['ticketId']}
           </Typography>
       
           {/* <Typography variant="subtitle2" noWrap>
-            {ticketsTransactions[0]['document']}
+            {ticket['document']}
           </Typography>
          */}
         
           <Typography variant="subtitle2" noWrap>
-            {`Tema: ${ticketsTransactions[0]['subject']}`}
+            {`Tema: ${ticket['subject']}`}
           </Typography>
         
         
           <Typography variant="subtitle2" noWrap>
-            {`Estado: ${ticketsTransactions[0]['status']}`}
+            {`Estado: ${ticket['status']}`}
           </Typography>
       
         {/* <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -237,13 +240,13 @@ const handleChange = async (event) => {
       </Stack>
       <CardActions>
       <Stack direction="column" spacing={0} sx={{ p: 1 }}>
-        <Link href={ticketsTransactions[0]['document']} underline="hover">
+        <Link href={ticket['document']} underline="hover">
           VER DOCUMENTO
         </Link>
         {/* <Button size="small">VER DOCUMENTO</Button> */}
         <Stack direction="column" spacing={2} sx={{ p: 1 }}>
         {actionButtons(e => handleClick(e), 
-                        ticketsTransactions[0]['status'], 
+                        ticket['status'], 
                         handleChange, 
                         hiddenFileInput, 
                         handleUpload,
@@ -256,4 +259,131 @@ const handleChange = async (event) => {
       </CardActions>
     </Card>
   );
+
+
 }
+
+// export default function TicketCard({ ticket, users}) {
+
+//   const dispatch = useDispatch()
+//   const hiddenFileInput = useRef(null);
+//   const [file, setFile] = useState()
+
+//   const { ticketUsers, ticketsTransactions } = ticket;
+
+//   const handleUploadDocument = async (event) => {
+//     const keepName = ticketsTransactions[0]['document'].replace('https://d1d5i0xjsb5dtw.cloudfront.net/','')
+//     const promise = new Promise ( async (resolve, reject) => {
+//       const {data} = await httpManager.getPresignedUrl(keepName)   
+//     const pipe = {
+//         bucket: "myawsbucketwhatsapp",
+//         ...data.fields,
+//         'Content-Type':file.type ,
+//         file: file
+//     };
+//     const formData = new FormData();
+//     for (const name in pipe) {
+//         formData.append(name, pipe[name]);
+//     }
+//     const {status} = await httpManager.uploadFileFromBrowser(data.url, formData)
+//     console.log(status)
+//     if(status === 204) { 
+//       // await httpManager.updateProfilePicture({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": account._id})
+//       // resolve({"image": `https://d1d5i0xjsb5dtw.cloudfront.net/${image.name}`, "_id": account._id})
+//       resolve({ticketId: ticketsTransactions[0]['ticketId'], status: "ENVIADO"}) 
+//     } else {reject("error loading to S3")} 
+// });
+
+// promise.then((d) => {
+//     console.log(d)
+//     dispatch(modifyTicket(d))
+//   });
+// }
+
+// const handleClick = async(event) => {
+//   const {name} = event.target
+//   const updateTicket = {ticketId: ticketsTransactions[0]['ticketId'], status: name}
+//   dispatch(modifyTicket(updateTicket))
+// }
+
+// const handleUpload = event => {
+//   hiddenFileInput.current.click();
+// };
+
+// const handleChange = async (event) => {
+//   const file = event.target.files[0];
+//   setFile(file)
+//   console.log(file)
+//   // if(file && file.type.substr(0,5) === "image") {
+//   //   setImage(file);
+//   // } else {
+//   //   setImage(null)
+//   // }
+// };
+
+//   return (
+//     <Card>
+//         <CardHeader 
+//             title = {`Cliente: ${ticketUsers[1]['name']}`}
+//             subheader = {new Date(ticketsTransactions[0]['createdAt']).toDateString()}
+//         />
+//       <Stack spacing={2} sx={{ p: 3 }}>
+
+//           <Typography variant="subtitle2" noWrap>
+//             {ticketsTransactions[0]['ticketId']}
+//           </Typography>
+      
+//           {/* <Typography variant="subtitle2" noWrap>
+//             {ticketsTransactions[0]['document']}
+//           </Typography>
+//          */}
+        
+//           <Typography variant="subtitle2" noWrap>
+//             {`Tema: ${ticketsTransactions[0]['subject']}`}
+//           </Typography>
+        
+        
+//           <Typography variant="subtitle2" noWrap>
+//             {`Estado: ${ticketsTransactions[0]['status']}`}
+//           </Typography>
+      
+//         {/* <Stack direction="row" alignItems="center" justifyContent="space-between">
+//           <ColorPreview colors={colors} />
+//           <Typography variant="subtitle1">
+//             <Typography
+//               component="span"
+//               variant="body1"
+//               sx={{
+//                 color: 'text.disabled',
+//                 textDecoration: 'line-through',
+//               }}
+//             >
+//               {priceSale && fCurrency(priceSale)}
+//             </Typography>
+//             &nbsp;
+//             {fCurrency(price)}
+//           </Typography>
+//         </Stack> */}
+//       </Stack>
+//       <CardActions>
+//       <Stack direction="column" spacing={0} sx={{ p: 1 }}>
+//         <Link href={ticketsTransactions[0]['document']} underline="hover">
+//           VER DOCUMENTO
+//         </Link>
+//         {/* <Button size="small">VER DOCUMENTO</Button> */}
+//         <Stack direction="column" spacing={2} sx={{ p: 1 }}>
+//         {actionButtons(e => handleClick(e), 
+//                         ticketsTransactions[0]['status'], 
+//                         handleChange, 
+//                         hiddenFileInput, 
+//                         handleUpload,
+//                         handleUploadDocument,
+//                         file)}
+//         {/* <Button name="Acceptado" onClick={e => handleClick(e)} variant="contained">Aceptar</Button>
+//         <Button name="Rechazado" onClick={e => handleClick(e)} variant="contained">Rechazar</Button> */}
+//         </Stack>
+//       </Stack>
+//       </CardActions>
+//     </Card>
+//   );
+// }

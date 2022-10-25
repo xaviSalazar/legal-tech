@@ -52,7 +52,11 @@ export default function EcommerceShop() {
           </Stack>
         </Stack>
 
-        <TicketList tickets = {ticketsList} />
+        { ticketsList && ticketsList.map((ticketPersonal) => (
+            <TicketList tickets = {ticketPersonal} />
+        ))}
+
+        {/* <TicketList tickets = {ticketsList} /> */}
         {/* <ProductCartWidget /> */}
       </Container>
     </Page>

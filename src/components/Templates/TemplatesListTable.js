@@ -14,6 +14,8 @@ import PizZipUtils from 'pizzip/utils/index.js';
 import { httpManager } from '../../managers/httpManager';
 // redux 
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 
 //-----------------------product template viewer
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
@@ -211,6 +213,8 @@ export const TemplatesListTable = ({...rest }) => {
   const [editableDoc, setEditableDoc] =  useState([])
   const [champsToFill, setChampsToFill] = useState({})
   const [tabIndex, setTabIndex] = useState(0);
+  const navigate = useNavigate();
+
 
  
 
@@ -277,7 +281,6 @@ export const TemplatesListTable = ({...rest }) => {
   }
 
   const handleBuy = async(event) => {
-    console.log(`comprar`)
     if(list.length === 1) {
       // abogado
       const Abogado = {name:list[0]['name'], 
@@ -297,8 +300,12 @@ export const TemplatesListTable = ({...rest }) => {
       }
 
       const data = { Abogado: Abogado, Cliente: Cliente, ticketTransaction: ticketTransaction}
-      console.log(data)
-      await httpManager.createTicket(data);
+      const ticketCreation = await httpManager.createTicket(data);
+      console.log(ticketCreation)
+      if(ticketCreation['data']['responseCode'] === 200) {
+        navigate('/cliente-page')
+        alert(ticketCreation['data']['message'])
+      }
     }
 
   }
