@@ -303,7 +303,7 @@ export const TemplatesListTable = ({...rest }) => {
       const ticketCreation = await httpManager.createTicket(data);
       console.log(ticketCreation)
       if(ticketCreation['data']['responseCode'] === 200) {
-        navigate('/cliente-page')
+        navigate('/cliente-page/propuestas')
         alert(ticketCreation['data']['message'])
       }
     }

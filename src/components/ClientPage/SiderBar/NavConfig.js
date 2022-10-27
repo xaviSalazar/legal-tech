@@ -6,11 +6,11 @@ import Iconify from '../../Iconify';
 const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
 const navConfig = [
-  // {
-  //   title: 'dashboard',
-  //   path: '/dashboard/app',
-  //   icon: getIcon('eva:pie-chart-2-fill'),
-  // },
+  {
+    title: 'propuestas',
+    path: '/cliente-page/propuestas',
+    icon: getIcon('eva:briefcase-fill'),
+  },
   // {
   //   title: 'user',
   //   path: '/dashboard/user',

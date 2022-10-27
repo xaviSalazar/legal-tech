@@ -69,6 +69,7 @@ export default function Router() {
       children: [
         { path: 'documentos', element: <Templates/> },
         { path: 'account',element: <Account /> },
+        { path: 'propuestas', element: <Propuestas /> },
       ],
     },
     // {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 // material
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography, Box } from '@mui/material';
 // components
 import Page from '../components/Page';
 import TicketList from '../components/Tickets/TicketList';
@@ -52,10 +52,14 @@ export default function EcommerceShop() {
           </Stack>
         </Stack>
 
-        { ticketsList && ticketsList.map((ticketPersonal) => (
-            <TicketList tickets = {ticketPersonal} />
+        <Stack spacing={2}>
+        { ticketsList && ticketsList.map((ticketPersonal, index) => (
+            <Box>
+            <TicketList tickets = {ticketPersonal} />     
+            </Box>     
         ))}
-
+        </Stack>
+  
         {/* <TicketList tickets = {ticketsList} /> */}
         {/* <ProductCartWidget /> */}
       </Container>

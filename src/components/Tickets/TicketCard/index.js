@@ -16,9 +16,8 @@ import CardHeader from '@mui/material/CardHeader';
 // import { httpManager } from '../../../managers/httpManager';
 import { modifyTicket } from '../../../redux/tickets/ticketAction';
 // redux 
-import {  useDispatch } from 'react-redux';
+import {  useSelector, useDispatch } from 'react-redux';
 import { httpManager } from '../../../managers/httpManager';
-
 
 // ----------------------------------------------------------------------
 
@@ -68,81 +67,98 @@ TicketCard.propTypes = {
 //     "conversation": [],
 //     "__v": 0
 // },
-const actionButtons = (handleClick, status, handleChange, hiddenFileInput, handleUpload, handleUploadDocument, file) => {
+const actionButtons = (handleClick, 
+                      status, 
+                      handleChange, 
+                      hiddenFileInput, 
+                      handleUpload, 
+                      handleUploadDocument, 
+                      file,
+                      userType) => {
 
-  if(status === "Acceptado") {
-    return (
-      <>
-      <Typography variant="subtitle2" noWrap>
-      Procese la solicitud.
-      </Typography> 
-      <Typography variant="subtitle2" noWrap>
-      Paso 1. Descargue el documento
-      </Typography> 
-      <Typography variant="subtitle2" noWrap>
-      Paso 2. Firme electronicamente
-      </Typography> 
-      <Typography variant="subtitle2" noWrap>
-      Paso 3. Genere un PDF 
-      </Typography> 
-      <Typography variant="subtitle2" noWrap>
-      Paso 4. subir el archivo y enviar
-      </Typography> 
-      {file &&  <Typography variant="subtitle2" noWrap>
-      {file.name}
-      </Typography> 
+  switch (userType) {
+    case "Cliente":
+      return (<></>)
+
+    case "Abogado":
+      if(status === "Acceptado") {
+        return (
+          <>
+          <Typography variant="subtitle2" noWrap>
+          Procese la solicitud.
+          </Typography> 
+          <Typography variant="subtitle2" noWrap>
+          Paso 1. Descargue el documento
+          </Typography> 
+          <Typography variant="subtitle2" noWrap>
+          Paso 2. Firme electronicamente
+          </Typography> 
+          <Typography variant="subtitle2" noWrap>
+          Paso 3. Genere un PDF 
+          </Typography> 
+          <Typography variant="subtitle2" noWrap>
+          Paso 4. subir el archivo y enviar
+          </Typography> 
+          {file &&  <Typography variant="subtitle2" noWrap>
+          {file.name}
+          </Typography> 
+          }
+          {file && <Button
+              color="primary"
+              variant="contained"
+              onClick={handleUploadDocument}
+            > 
+            Enviar a cliente
+            </Button>}
+          <input 
+              type="file" 
+              ref={hiddenFileInput}
+              style={{display:'none'}}
+              accept="application/pdf"
+              onChange={handleChange}     
+          />
+          <Button
+              color="primary"
+              variant="contained"
+              onClick={handleUpload}
+            > 
+            Subir archivo
+            </Button>
+      </>
+        )
       }
-      {file && <Button
-          color="primary"
-          variant="contained"
-          onClick={handleUploadDocument}
-        > 
-        Enviar a cliente
-        </Button>}
-      <input 
-          type="file" 
-          ref={hiddenFileInput}
-          style={{display:'none'}}
-          accept="application/pdf"
-          onChange={handleChange}     
-      />
-      <Button
-          color="primary"
-          variant="contained"
-          onClick={handleUpload}
-        > 
-        Subir archivo
-        </Button>
-  </>
-    )
+      else if(status === "Rechazado") {
+        return (
+          <Typography variant="subtitle2" noWrap>
+              ****Solicitud rechazada****
+          </Typography>)
+      }
+      else if(status === "Esperando respuesta") {
+      return (
+      <>
+      <Button name="Acceptado" onClick={handleClick} variant="contained">Aceptar</Button>
+      <Button name="Rechazado" onClick={handleClick} variant="contained">Rechazar</Button>
+      </>
+      )
+    } else {
+      return (<></>)
+    }
   }
-  else if(status === "Rechazado") {
-    return (
-      <Typography variant="subtitle2" noWrap>
-          ****Solicitud rechazada****
-      </Typography>)
-  }
-  else if(status === "Esperando respuesta") {
-  return (
-  <>
-  <Button name="Acceptado" onClick={handleClick} variant="contained">Aceptar</Button>
-  <Button name="Rechazado" onClick={handleClick} variant="contained">Rechazar</Button>
-  </>
-  )
-} else {
-  return (<></>)
-}
+  
 }
 
 
 export default function TicketCard({ ticket, ticketUsers}) {
 
-  console.log(ticket)
-  console.log(ticketUsers)
+  // console.log(ticket)
+  // console.log(ticketUsers)
 
   const dispatch = useDispatch()
   const hiddenFileInput = useRef(null);
   const [file, setFile] = useState()
+  const {account} = useSelector(state => state.user);
+
+  console.log(account)
 
   const handleUploadDocument = async (event) => {
     const keepName = ticket['document'].replace('https://d1d5i0xjsb5dtw.cloudfront.net/','')
@@ -197,7 +213,7 @@ const handleChange = async (event) => {
   return (
     <Card>
         <CardHeader 
-            title = {`Cliente: ${ticketUsers[1]['name']}`}
+            title = {  account &&  account.userMod === 'Abogado' ? `Cliente: ${ticketUsers[1]['name']}` : `Abogado: ${ticketUsers[0]['name']}`}
             subheader = {new Date(ticket['createdAt']).toDateString()}
         />
       <Stack spacing={2} sx={{ p: 3 }}>
@@ -245,13 +261,14 @@ const handleChange = async (event) => {
         </Link>
         {/* <Button size="small">VER DOCUMENTO</Button> */}
         <Stack direction="column" spacing={2} sx={{ p: 1 }}>
-        {actionButtons(e => handleClick(e), 
+        {account && actionButtons(e => handleClick(e), 
                         ticket['status'], 
                         handleChange, 
                         hiddenFileInput, 
                         handleUpload,
                         handleUploadDocument,
-                        file)}
+                        file,
+                        account.userMod)}
         {/* <Button name="Acceptado" onClick={e => handleClick(e)} variant="contained">Aceptar</Button>
         <Button name="Rechazado" onClick={e => handleClick(e)} variant="contained">Rechazar</Button> */}
         </Stack>

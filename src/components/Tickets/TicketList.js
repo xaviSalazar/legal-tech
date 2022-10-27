@@ -16,7 +16,7 @@ export default function TicketList({ tickets }) {
       {tickets.ticketsTransactions.map((ticket) => (
         <Grid key={ticket._id} item xs={12} sm={6} md={3}>
         <TicketCard ticket={ticket} ticketUsers={tickets.ticketUsers}/>
-        </Grid>
+    </Grid>
       ))}
 
       {/* {tickets.map((ticket) => (
