@@ -13,5 +13,7 @@ RUN npm install --legacy-peer-deps
 #Copy remaining files
 COPY . .
 
+RUN mkdir node_modules/.cache && chmod -R 777 node_modules/.cache
+
 #Start the application
 CMD ["npm", "run", "start"]
