@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { set, sub } from 'date-fns';
 import { noCase } from 'change-case';
@@ -25,6 +26,10 @@ import { fToNow } from '../../../utils/formatTime';
 import Iconify from '../../Iconify';
 import Scrollbar from '../../Scrollbar';
 import MenuPopover from '../../MenuPopover';
+
+import { fetchAllNotifs, markAsRead } from '../../../redux/notifications/notificationAction';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 // ----------------------------------------------------------------------
 const NOTIFICATIONS = [
@@ -62,7 +67,7 @@ const NOTIFICATIONS = [
     avatar: null,
     type: 'mail',
     createdAt: sub(new Date(), { days: 2, hours: 3, minutes: 30 }),
-    isUnRead: false,
+    isUnRead: true,
   },
   {
     id: faker.datatype.uuid(),
@@ -80,9 +85,22 @@ export default function NotificationsPopover() {
 
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
 
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+  // const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
 
   const [open, setOpen] = useState(null);
+
+  const dispatch = useDispatch();
+
+  const {account} = useSelector(state => state.user)
+
+  const {notifsList} = useSelector(state => state.notifications)
+
+  const totalUnRead = notifsList.filter(notif => notif.isUnread === true).length;
+
+  useEffect(() => {
+    if(Object.keys(account).length === 0 && account.constructor === Object) {return}
+    dispatch(fetchAllNotifs(account['_id']))
+  }, [account])
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -100,6 +118,11 @@ export default function NotificationsPopover() {
       }))
     );
   };
+
+  const handleListItemButton = (event, id) => {
+    console.log(id)
+    dispatch(markAsRead({'id': id}))
+  }
 
   return (
     <>
@@ -122,9 +145,9 @@ export default function NotificationsPopover() {
       >
         <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
           <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="subtitle1">Notifications</Typography>
+            <Typography variant="subtitle1">Notificaciones</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread messages
+              Tienes {totalUnRead} nuevas notificaciones
             </Typography>
           </Box>
 
@@ -148,9 +171,10 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(0, 2).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
+            {notifsList && notifsList.filter(notif => notif.isUnread === true).map((notification) => (
+              <NotificationItem key={notification._id} notification={notification} handleListItemButton={handleListItemButton}/>
             ))}
+   
           </List>
 
           <List
@@ -161,9 +185,12 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(2, 5).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
+            {notifsList && notifsList.filter(notif => notif.isUnread === false).map((notification) => (
+              <NotificationItem key={notification._id} notification={notification} handleListItemButton={handleListItemButton}/>
             ))}
+            {/* {notifications.slice(2, 5).map((notification) => (
+              <NotificationItem key={notification.id} notification={notification} />
+            ))} */}
           </List>
         </Scrollbar>
 
@@ -181,20 +208,22 @@ export default function NotificationsPopover() {
 
 // ----------------------------------------------------------------------
 
-NotificationItem.propTypes = {
-  notification: PropTypes.shape({
-    createdAt: PropTypes.instanceOf(Date),
-    id: PropTypes.string,
-    isUnRead: PropTypes.bool,
-    title: PropTypes.string,
-    description: PropTypes.string,
-    type: PropTypes.string,
-    avatar: PropTypes.any,
-  }),
-};
+// NotificationItem.propTypes = {
+//   notification: PropTypes.shape({
+//     createdAt: PropTypes.instanceOf(Date),
+//     id: PropTypes.string,
+//     isUnRead: PropTypes.bool,
+//     title: PropTypes.string,
+//     description: PropTypes.string,
+//     type: PropTypes.string,
+//     avatar: PropTypes.any,
+//   }),
+// };
 
-function NotificationItem({ notification }) {
-  const { avatar, title } = renderContent(notification);
+function NotificationItem({ notification, handleListItemButton }) {
+  // const { avatar, title } = renderContent(notification);
+
+  const { title } = renderContent(notification);
 
   return (
     <ListItemButton
@@ -202,14 +231,15 @@ function NotificationItem({ notification }) {
         py: 1.5,
         px: 2.5,
         mt: '1px',
-        ...(notification.isUnRead && {
+        ...(notification['isUnread'] && {
           bgcolor: 'action.selected',
         }),
       }}
+      onClick = {(event) => handleListItemButton(event, notification['_id'])}
     >
-      <ListItemAvatar>
+      {/* <ListItemAvatar>
         <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
-      </ListItemAvatar>
+      </ListItemAvatar> */}
       <ListItemText
         primary={title}
         secondary={
@@ -223,7 +253,7 @@ function NotificationItem({ notification }) {
             }}
           >
             <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
-            {fToNow(notification.createdAt)}
+            {fToNow(new Date(notification.createdAt))}
           </Typography>
         }
       />
@@ -243,7 +273,7 @@ function renderContent(notification) {
     </Typography>
   );
 
-  if (notification.type === 'order_placed') {
+  if (notification.type === 'Nueva propuesta') {
     return {
       avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
       title,

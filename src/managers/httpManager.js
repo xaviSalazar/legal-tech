@@ -68,6 +68,17 @@ const modifyTicketStatus = async(data) => {
     return await axios.post(`${API_BASE_URL}/modify-ticket-status`, data)
 }
 
+// fetch unread notifications 
+const fetchUnreadNotifications = async (id) => {
+    return await axios.get(`${API_BASE_URL}/fetch-all-notifications?userId=${id}`)
+}
+
+// mark as read single notification 
+const markAsReadSingleNotification = async (id) => {
+    return await axios.post(`${API_BASE_URL}/mark-as-read-notification`, id)
+}
+
+
 export const httpManager = {
     facebookLogin,
     registerCustomer,
@@ -83,5 +94,7 @@ export const httpManager = {
     retrieveUsers,
     createTicket,
     fetchAllTickets,
-    modifyTicketStatus
+    modifyTicketStatus,
+    fetchUnreadNotifications,
+    markAsReadSingleNotification
 };

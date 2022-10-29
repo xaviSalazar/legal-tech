@@ -3,6 +3,7 @@ import abogadosReducer from './mainlayout/mainlayoutSlice'
 import loginReducer from './login/loginSlice'
 import userReducer  from './authenticate/userSlice'
 import ticketsReducer from './tickets/ticketSlice'
+import notificationReducer from './notifications/notificationSlice'
 
 const store = configureStore({
     
@@ -11,7 +12,8 @@ const store = configureStore({
         abogados: abogadosReducer,
         login: loginReducer,
         user: userReducer,
-        tickets: ticketsReducer
+        tickets: ticketsReducer,
+        notifications: notificationReducer
 
     }
 });
