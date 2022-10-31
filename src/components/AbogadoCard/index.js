@@ -8,6 +8,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import Avatar from '@mui/material/Avatar';
 import CardActionArea from '@mui/material/CardActionArea';
 // import { InsertEmoticonOutlined } from '@mui/icons-material';
+import Label from '../Label';
 
 // ----------------------------------------------------------------------
 
@@ -57,6 +58,7 @@ const ProductImgStyle = styled('img')({
             phoneNumber,
             subjects,
             rating, 
+            appointmentCost,
             id } = details;
 
     
@@ -76,42 +78,42 @@ const ProductImgStyle = styled('img')({
             <CardActionArea onClick={e => handleClickOpen(e)}>
             <Grid container spacing={3} >
 
-            <Grid item sm={3} md={3}>
+            <Grid item sm={4} md={4}>
             <Avatar sx={{ width: 150, height: 150 }}>
             <MyImage name={name} image_url={image_url}/>
             </Avatar>
-            <Stack spacing={2} sx={{ p:1 }}>
+            <Stack spacing={1} sx={{ p:1 }}>
             <Typography variant="subtitle1" noWrap>
                 {email}
             </Typography>
             <Typography variant="subtitle1" noWrap>
                 {phoneNumber}
             </Typography>
+            <Typography variant="subtitle1" noWrap>
+                {`Consulta: ${appointmentCost} USD`}
+            </Typography>
             </Stack>
-
             </Grid>
-
-
-            <Grid item sm={9} md={9}>
+            <Grid item sm={8} md={8}>
             <Stack spacing={2} sx={{ p:1 }}>
                 <Typography variant="h4" noWrap>
                 {name}
                 </Typography>
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    {
-                        subjects?.map((item, index) => <Typography key={index} variant="h5">{item}</Typography>)
+                <Stack direction="row" justify-content="space-around"  >
+                    {      
+                        // subjects?.map((item, index) => <Typography key={index} variant="h5">{item}</Typography>)
+                        subjects?.map((item, index) =>  <Label key={index} variant="ghost" color={'success'}>{item}</Label>)
                     }
                 </Stack>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography variant="subtitle1">
-                    {/* <Typography
+                {/* <Typography variant="subtitle1"> */}
+                    <Typography
                     component="span"
-                    variant="body1"
+                    variant="subtitle1"
                     sx={{
-                        color: 'text.disabled',
-                        textDecoration: 'line-through',
+                        textDecoration: 'none',
                     }}
-                    > */}
+                    >
                     {`${city}, ${province}`}
                     {/* </Typography> */}
                 </Typography>
@@ -123,8 +125,8 @@ const ProductImgStyle = styled('img')({
                 </Stack>
                 <Stack direction="row" alignItems="center" >
                 <Typography variant="body1">
-                    {/* {rating} */}
-                    RAT
+                    {`rating`}
+                    
                 </Typography>
                 </Stack>
                 
