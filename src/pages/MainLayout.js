@@ -191,6 +191,7 @@ export default function MainLayout() {
                 position: '-webkit-sticky',
                 position: 'sticky',
                 top: 0,
+                zIndex: 1
                 }}
             >
         <Grid item xs={12}lg={12}>

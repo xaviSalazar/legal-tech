@@ -54,7 +54,7 @@ const SearchBar = ({
             <Grid container spacing={2}>
 
             {/* <SearchIcon className="searchBar-icon"/> */}
-            <Grid item xs={12}lg={4}>
+            <Grid item xs={12} lg={4}>
             <FilledInput 
                 fullWidth
                 type="text" 
